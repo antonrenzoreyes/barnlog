@@ -1,0 +1,43 @@
+name: SQLC
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - "backend/sqlc.yaml"
+      - "backend/db/schema.sql"
+      - "backend/db/migrations/**"
+      - "backend/db/queries/**"
+      - "backend/internal/infrastructure/sqlite/sqlc/**"
+      - ".github/workflows/sqlc.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  verify-sqlc:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install sqlc
+        run: go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+
+      - name: Verify sqlc generated code is up to date
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          sqlc generate -f backend/sqlc.yaml
+          if [ -n "$(git status --porcelain --untracked-files=all -- backend/internal/infrastructure/sqlite/sqlc)" ]; then
+            echo "sqlc generated files are out of date. Run: sqlc generate -f backend/sqlc.yaml"
+            git status --porcelain --untracked-files=all -- backend/internal/infrastructure/sqlite/sqlc
+            exit 1
+          fi

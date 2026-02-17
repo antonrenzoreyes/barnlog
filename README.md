@@ -104,12 +104,36 @@ Install optional pre-commit hook (auto-regenerates/stages `backend/db/schema.sql
 make install-hooks
 ```
 
+## SQLC
+
+SQL queries for typed code generation live in:
+- `backend/db/queries/`
+
+SQLC configuration:
+- `backend/sqlc.yaml`
+
+Install SQLC CLI:
+
+```bash
+go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+```
+
+Generate Go code:
+
+```bash
+sqlc generate -f backend/sqlc.yaml
+```
+
+Generated package output:
+- `backend/internal/infrastructure/sqlite/sqlc`
+
 ## Repository Layout (Current)
 
 ```text
 barnlog/
 ├─ go.mod
 ├─ backend/
+│  ├─ sqlc.yaml
 │  ├─ cmd/
 │  │  └─ server/
 │  ├─ db/
