@@ -1,7 +1,7 @@
 ---
 name: Task
 about: Track one technical task linked to a story issue
-title: "[EPIC-XX][US-XX][TASK] "
+title: "[TASK] "
 labels: ["task"]
 assignees: []
 ---

@@ -7,8 +7,9 @@ assignees: []
 ---
 
 ## Epic Doc
-- `docs/epics/EPIC-XX.md`
+- [EPIC-XX.md](https://github.com/antonrenzoreyes/barnlog/blob/master/docs/epics/EPIC-XX.md)
 
-## Stories
-- [ ] #<story_issue_number>
-- [ ] #<story_issue_number>
+## Done
+- [ ] Doc is finalized
+- [ ] All linked story issues are closed
+- [ ] Epic outcome is delivered

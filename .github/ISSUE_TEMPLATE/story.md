@@ -7,14 +7,11 @@ assignees: []
 ---
 
 ## Story Doc
-- `docs/user-stories/US-XX.md`
+- [US-XX.md](https://github.com/antonrenzoreyes/barnlog/blob/master/docs/user-stories/US-XX.md)
 
-## Tasks
-- [ ] #<task_issue_number>
-- [ ] #<task_issue_number>
-
-## Task Checklist
-- [ ] Backend:
-- [ ] Frontend:
-- [ ] Data Migrations:
-- [ ] Tests:
+## Done
+- [ ] Doc is finalized
+- [ ] Backend
+- [ ] Frontend
+- [ ] Data Migrations
+- [ ] E2E Tests
