@@ -15,6 +15,7 @@ See full stack decisions in `.aiassistant/rules/STACK.md`.
 ## Standards
 
 - Go architecture and coding rules: `.aiassistant/rules/GO_STANDARDS.md`
+- Go testing standards: `.aiassistant/rules/GO_TEST_STANDARDS.md`
 - MCP usage and security standards: `.aiassistant/rules/MCP_STANDARDS.md`
 
 ## Prerequisites
@@ -26,6 +27,23 @@ See full stack decisions in `.aiassistant/rules/STACK.md`.
 ```bash
 go run ./backend/cmd/server
 ```
+
+## Backend Runtime
+
+Runtime wiring currently includes:
+
+- Environment-driven configuration
+- Structured logging via `slog`
+- HTTP server with `chi` middleware
+- Graceful shutdown on `SIGINT`/`SIGTERM`
+- Basic operational endpoints: `/healthz`, `/readyz`
+
+### Environment Variables
+
+- `BARNLOG_ENV` (default: `dev`)
+- `BARNLOG_HTTP_ADDR` (default: `:8080`)
+- `BARNLOG_LOG_LEVEL` (default: `info`)
+- `BARNLOG_SHUTDOWN_TIMEOUT` (default: `10s`)
 
 ## Repository Layout (Current)
 
