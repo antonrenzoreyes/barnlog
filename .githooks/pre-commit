@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if git diff --cached --name-only -- backend/db/migrations | grep -q '^backend/db/migrations/'; then
+  echo "Detected migration changes. Regenerating backend/db/schema.sql..."
+  make db-schema
+  git add backend/db/schema.sql
+fi
