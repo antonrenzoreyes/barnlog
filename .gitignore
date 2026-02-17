@@ -1,0 +1,4 @@
+# MCP Settings
+logs/
+backend/db/*.sqlite*
+.ai/mcp/mcp.json
