@@ -2,3 +2,4 @@
 logs/
 backend/db/*.sqlite*
 .ai/mcp/mcp.json
+.idea/golinter.xml
