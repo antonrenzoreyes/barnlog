@@ -20,6 +20,16 @@ See full stack decisions in `.aiassistant/rules/STACK.md`.
 - Events context rules: `.aiassistant/rules/EVENTS_CONTEXT.md`
 - MCP usage and security standards: `.aiassistant/rules/MCP_STANDARDS.md`
 
+## Planning Workflow
+
+Planning artifacts are managed with the custom `barnboard` skill.
+
+- Epic docs: `docs/epics/EPIC-XX.md`
+- Story docs: `docs/user-stories/US-XX.md`
+- GitHub issues track execution with native sub-issues:
+- Epic -> Story
+- Story -> Task
+
 ## Data Model Notes
 
 - Events table semantics and usage: `backend/internal/domain/events/EVENTS_TABLE.md`
