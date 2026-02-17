@@ -10,6 +10,9 @@ import (
 func TestLoadFromEnvDefaults(t *testing.T) {
 	t.Setenv("BARNLOG_ENV", "")
 	t.Setenv("BARNLOG_HTTP_ADDR", "")
+	t.Setenv("BARNLOG_DB_PATH", "")
+	t.Setenv("BARNLOG_MIGRATIONS_PATH", "")
+	t.Setenv("BARNLOG_AUTO_MIGRATE", "")
 	t.Setenv("BARNLOG_LOG_LEVEL", "")
 	t.Setenv("BARNLOG_SHUTDOWN_TIMEOUT", "")
 
@@ -24,6 +27,15 @@ func TestLoadFromEnvDefaults(t *testing.T) {
 	if cfg.HTTPAddr != ":8080" {
 		t.Fatalf("expected HTTPAddr=:8080, got %q", cfg.HTTPAddr)
 	}
+	if cfg.DBPath != "backend/db/dev.sqlite3" {
+		t.Fatalf("expected DBPath=backend/db/dev.sqlite3, got %q", cfg.DBPath)
+	}
+	if cfg.MigrationsPath != "backend/db/migrations" {
+		t.Fatalf("expected MigrationsPath=backend/db/migrations, got %q", cfg.MigrationsPath)
+	}
+	if !cfg.AutoMigrate {
+		t.Fatalf("expected AutoMigrate=true by default")
+	}
 	if cfg.LogLevel != slog.LevelInfo {
 		t.Fatalf("expected LogLevel=info, got %v", cfg.LogLevel)
 	}
@@ -35,6 +47,9 @@ func TestLoadFromEnvDefaults(t *testing.T) {
 func TestLoadFromEnvCustomValues(t *testing.T) {
 	t.Setenv("BARNLOG_ENV", "prod")
 	t.Setenv("BARNLOG_HTTP_ADDR", ":9090")
+	t.Setenv("BARNLOG_DB_PATH", "backend/db/custom.sqlite3")
+	t.Setenv("BARNLOG_MIGRATIONS_PATH", "backend/db/custom-migrations")
+	t.Setenv("BARNLOG_AUTO_MIGRATE", "false")
 	t.Setenv("BARNLOG_LOG_LEVEL", "debug")
 	t.Setenv("BARNLOG_SHUTDOWN_TIMEOUT", "3s")
 
@@ -48,6 +63,15 @@ func TestLoadFromEnvCustomValues(t *testing.T) {
 	}
 	if cfg.HTTPAddr != ":9090" {
 		t.Fatalf("expected HTTPAddr=:9090, got %q", cfg.HTTPAddr)
+	}
+	if cfg.DBPath != "backend/db/custom.sqlite3" {
+		t.Fatalf("expected DBPath=backend/db/custom.sqlite3, got %q", cfg.DBPath)
+	}
+	if cfg.MigrationsPath != "backend/db/custom-migrations" {
+		t.Fatalf("expected MigrationsPath=backend/db/custom-migrations, got %q", cfg.MigrationsPath)
+	}
+	if cfg.AutoMigrate {
+		t.Fatalf("expected AutoMigrate=false, got true")
 	}
 	if cfg.LogLevel != slog.LevelDebug {
 		t.Fatalf("expected LogLevel=debug, got %v", cfg.LogLevel)
@@ -78,5 +102,17 @@ func TestLoadFromEnvInvalidShutdownTimeout(t *testing.T) {
 	}
 	if !strings.Contains(err.Error(), "BARNLOG_SHUTDOWN_TIMEOUT") {
 		t.Fatalf("expected BARNLOG_SHUTDOWN_TIMEOUT in error, got %q", err.Error())
+	}
+}
+
+func TestLoadFromEnvInvalidAutoMigrate(t *testing.T) {
+	t.Setenv("BARNLOG_AUTO_MIGRATE", "not-a-bool")
+
+	_, err := LoadFromEnv()
+	if err == nil {
+		t.Fatalf("expected error for invalid auto migrate value")
+	}
+	if !strings.Contains(err.Error(), "BARNLOG_AUTO_MIGRATE") {
+		t.Fatalf("expected BARNLOG_AUTO_MIGRATE in error, got %q", err.Error())
 	}
 }

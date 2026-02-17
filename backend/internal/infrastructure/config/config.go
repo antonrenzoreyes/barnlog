@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -13,6 +14,9 @@ import (
 type Config struct {
 	Env             string
 	HTTPAddr        string
+	DBPath          string
+	MigrationsPath  string
+	AutoMigrate     bool
 	LogLevel        slog.Level
 	ShutdownTimeout time.Duration
 }
@@ -22,6 +26,9 @@ func LoadFromEnv() (Config, error) {
 	cfg := Config{
 		Env:             getenv("BARNLOG_ENV", "dev"),
 		HTTPAddr:        getenv("BARNLOG_HTTP_ADDR", ":8080"),
+		DBPath:          getenv("BARNLOG_DB_PATH", "backend/db/dev.sqlite3"),
+		MigrationsPath:  getenv("BARNLOG_MIGRATIONS_PATH", "backend/db/migrations"),
+		AutoMigrate:     true,
 		ShutdownTimeout: 10 * time.Second,
 	}
 
@@ -37,6 +44,14 @@ func LoadFromEnv() (Config, error) {
 			return Config{}, fmt.Errorf("parse BARNLOG_SHUTDOWN_TIMEOUT: %w", err)
 		}
 		cfg.ShutdownTimeout = dur
+	}
+
+	if raw := strings.TrimSpace(os.Getenv("BARNLOG_AUTO_MIGRATE")); raw != "" {
+		enabled, err := strconv.ParseBool(raw)
+		if err != nil {
+			return Config{}, fmt.Errorf("parse BARNLOG_AUTO_MIGRATE: %w", err)
+		}
+		cfg.AutoMigrate = enabled
 	}
 
 	return cfg, nil

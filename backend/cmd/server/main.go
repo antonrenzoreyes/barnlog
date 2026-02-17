@@ -1,3 +1,4 @@
+// Package main boots the backend HTTP server and optional database migrations.
 package main
 
 import (
@@ -6,8 +7,10 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"syscall"
 	"time"
 
@@ -16,6 +19,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	gomigrate "github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
 func main() {
@@ -35,6 +41,13 @@ func run() error {
 	}
 
 	logger := newLogger(cfg)
+	if cfg.AutoMigrate {
+		if err := runMigrations(logger, cfg); err != nil {
+			return err
+		}
+	} else {
+		logger.Info("auto migration disabled")
+	}
 	srv := newHTTPServer(cfg, buildRouter(logger))
 
 	logger.Info(
@@ -109,4 +122,49 @@ func newLogger(cfg config.Config) *slog.Logger {
 		return slog.New(slog.NewTextHandler(os.Stdout, handlerOpts))
 	}
 	return slog.New(slog.NewJSONHandler(os.Stdout, handlerOpts))
+}
+
+func runMigrations(logger *slog.Logger, cfg config.Config) error {
+	dbPath, err := filepath.Abs(cfg.DBPath)
+	if err != nil {
+		return fmt.Errorf("resolve db path: %w", err)
+	}
+	migrationsPath, err := filepath.Abs(cfg.MigrationsPath)
+	if err != nil {
+		return fmt.Errorf("resolve migrations path: %w", err)
+	}
+
+	if err := os.MkdirAll(filepath.Dir(dbPath), 0o750); err != nil {
+		return fmt.Errorf("create db directory: %w", err)
+	}
+
+	dbURL := (&url.URL{Scheme: "sqlite3", Path: dbPath}).String()
+	srcURL := (&url.URL{Scheme: "file", Path: migrationsPath}).String()
+
+	logger.Info("running migrations", slog.String("database", dbURL), slog.String("source", srcURL))
+
+	m, err := gomigrate.New(srcURL, dbURL)
+	if err != nil {
+		return fmt.Errorf("initialize migrate: %w", err)
+	}
+	defer func() {
+		srcErr, dbErr := m.Close()
+		if srcErr != nil {
+			logger.Warn("close migration source", slog.Any("error", srcErr))
+		}
+		if dbErr != nil {
+			logger.Warn("close migration db", slog.Any("error", dbErr))
+		}
+	}()
+
+	if err := m.Up(); err != nil {
+		if errors.Is(err, gomigrate.ErrNoChange) {
+			logger.Info("no pending migrations")
+			return nil
+		}
+		return fmt.Errorf("run migrations: %w", err)
+	}
+
+	logger.Info("migrations applied")
+	return nil
 }

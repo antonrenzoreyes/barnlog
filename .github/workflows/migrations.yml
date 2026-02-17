@@ -1,0 +1,99 @@
+name: Migrations
+
+on:
+  pull_request:
+    branches: [master]
+    paths:
+      - "backend/db/migrations/**"
+      - "backend/db/schema.sql"
+      - "scripts/generate_schema_snapshot.sh"
+      - "Makefile"
+      - ".github/workflows/migrations.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  validate-and-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Validate migration filename pairs
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          up_files=(backend/db/migrations/*.up.sql)
+          down_files=(backend/db/migrations/*.down.sql)
+
+          if [ ${#up_files[@]} -eq 0 ]; then
+            echo "No .up.sql files found in backend/db/migrations"
+            exit 1
+          fi
+
+          for up in "${up_files[@]}"; do
+            base="${up%.up.sql}"
+            down="${base}.down.sql"
+            if [[ ! -f "$down" ]]; then
+              echo "Missing down migration for: $up"
+              exit 1
+            fi
+
+            name="$(basename "$base")"
+            if [[ ! "$name" =~ ^[0-9]{6}_[a-z0-9_]+$ ]]; then
+              echo "Invalid migration filename prefix: $name"
+              echo "Expected format: 000001_description"
+              exit 1
+            fi
+          done
+
+          for down in "${down_files[@]}"; do
+            base="${down%.down.sql}"
+            up="${base}.up.sql"
+            if [[ ! -f "$up" ]]; then
+              echo "Missing up migration for: $down"
+              exit 1
+            fi
+          done
+
+      - name: Install golang-migrate CLI (sqlite3)
+        run: go install -tags 'sqlite3' github.com/golang-migrate/migrate/v4/cmd/migrate@v4.19.0
+
+      - name: Install sqlite3 CLI
+        run: sudo apt-get update && sudo apt-get install -y sqlite3
+
+      - name: Run migration up/down smoke test on SQLite
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          mkdir -p /tmp/barnlog-ci
+          db_file="/tmp/barnlog-ci/migrations-ci.sqlite3"
+          db_url="sqlite3://${db_file}"
+
+          migrate -path backend/db/migrations -database "$db_url" up
+
+          echo "Current version after up:"
+          migrate -path backend/db/migrations -database "$db_url" version
+
+          migrate -path backend/db/migrations -database "$db_url" down 1
+          migrate -path backend/db/migrations -database "$db_url" up 1
+
+      - name: Verify schema snapshot is up to date
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          make db-schema-check
