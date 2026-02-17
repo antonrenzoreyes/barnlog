@@ -9,14 +9,6 @@ on:
       - "go.sum"
       - ".golangci.yml"
       - ".github/workflows/ci-go.yml"
-  push:
-    branches: [master]
-    paths:
-      - "**/*.go"
-      - "go.mod"
-      - "go.sum"
-      - ".golangci.yml"
-      - ".github/workflows/ci-go.yml"
 
 permissions:
   contents: read
