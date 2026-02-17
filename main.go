@@ -1,3 +1,4 @@
+// Package main is the entry point for the Barn Log application.
 package main
 
 import (
