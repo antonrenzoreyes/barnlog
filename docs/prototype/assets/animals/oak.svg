@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
+  <rect width="160" height="160" rx="24" fill="#efe0d2"/>
+  <circle cx="80" cy="62" r="24" fill="#caa182"/>
+  <rect x="44" y="90" width="72" height="34" rx="14" fill="#caa182"/>
+  <text x="80" y="146" text-anchor="middle" fill="#6f4b37" font-family="Arial, sans-serif" font-size="20" font-weight="700">O</text>
+</svg>

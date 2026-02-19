@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barn Log - UI Components</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app stack-4">
+    <header class="header">
+      <div>
+        <h1 class="title">Component Kit</h1>
+        <p class="subtitle">Reusable Barn Log building blocks</p>
+      </div>
+      <a class="text-sm muted" href="index.html">Home</a>
+    </header>
+
+    <section class="card stack-3">
+      <h2 class="section-title">Buttons</h2>
+      <div class="form-actions">
+        <button class="btn primary" type="button">Primary Action</button>
+        <button class="btn secondary" type="button">Secondary Action</button>
+      </div>
+    </section>
+
+    <section class="card stack-3">
+      <h2 class="section-title">Badges & Chips</h2>
+      <div class="row" style="justify-content:flex-start;gap:8px;">
+        <span class="badge pig">Pig</span>
+        <span class="badge goat">Goat</span>
+      </div>
+      <div class="chips">
+        <span class="chip active">All</span>
+        <span class="chip">Pig</span>
+        <span class="chip">Goat</span>
+      </div>
+    </section>
+
+    <section class="card stack-3">
+      <h2 class="section-title">Form Inputs</h2>
+      <input class="input" placeholder="Text input" />
+      <select class="select"><option>Dropdown</option></select>
+      <textarea class="textarea" placeholder="Multiline note"></textarea>
+    </section>
+
+    <section class="card stack-3">
+      <h2 class="section-title">Timeline Item</h2>
+      <ol class="timeline">
+        <li class="timeline-item">
+          <span class="event-icon" aria-hidden="true">🪣</span>
+          <h3 class="event-title">Feed</h3>
+          <p class="event-meta">Hay + pellets</p>
+          <p class="event-time">Today, 6:10 AM</p>
+        </li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>
