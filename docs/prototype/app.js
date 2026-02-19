@@ -18,7 +18,7 @@
 
   function initHomeTagFilter() {
     var chips = document.querySelectorAll('.chip-filter[data-filter]');
-    var cards = document.querySelectorAll('.animal-card[data-tag]');
+    var cards = document.querySelectorAll('.animal-card[data-species], .animal-card[data-tag]');
     if (!chips.length || !cards.length) return;
 
     function setFilter(filter) {
@@ -28,8 +28,8 @@
       });
 
       cards.forEach(function (card) {
-        var tag = card.getAttribute('data-tag');
-        var show = filter === 'all' || tag === filter;
+        var species = card.getAttribute('data-species') || card.getAttribute('data-tag');
+        var show = filter === 'all' || species === filter;
         card.classList.toggle('hidden', !show);
         card.classList.toggle('block', show);
       });
@@ -42,6 +42,52 @@
     });
 
     setFilter('all');
+  }
+
+  function setSpeciesOptionState(option, isActive) {
+    option.classList.toggle('is-selected', isActive);
+    option.setAttribute('aria-checked', isActive ? 'true' : 'false');
+  }
+
+  function initSpeciesSelector() {
+    var speciesRadios = document.querySelectorAll('input[name="species"]');
+    if (!speciesRadios.length) return;
+
+    function syncState() {
+      speciesRadios.forEach(function (radio) {
+        var option = radio.closest('.species-option');
+        if (!option) return;
+        setSpeciesOptionState(option, radio.checked);
+      });
+    }
+
+    speciesRadios.forEach(function (radio) {
+      radio.addEventListener('change', syncState);
+    });
+
+    syncState();
+  }
+
+  function initAnimalFormValidation() {
+    var saveLink = document.querySelector('[data-save-animal]');
+    var speciesRadios = document.querySelectorAll('input[name="species"]');
+    if (!saveLink || !speciesRadios.length) return;
+
+    var speciesError = document.getElementById('species-error');
+
+    saveLink.addEventListener('click', function (event) {
+      var selectedSpecies = document.querySelector('input[name="species"]:checked');
+      if (selectedSpecies) return;
+
+      event.preventDefault();
+      if (speciesError) speciesError.classList.remove('hidden');
+    });
+
+    speciesRadios.forEach(function (radio) {
+      radio.addEventListener('change', function () {
+        if (speciesError) speciesError.classList.add('hidden');
+      });
+    });
   }
 
   function setEventTypeStyle(activeType) {
@@ -94,5 +140,7 @@
 
   initIcons();
   initHomeTagFilter();
+  initSpeciesSelector();
+  initAnimalFormValidation();
   initEventTypeForm();
 })();

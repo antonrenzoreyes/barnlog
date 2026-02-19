@@ -46,31 +46,40 @@
       </div>
 
       <div class="space-y-2">
-        <label class="text-base font-medium text-stone-700" for="animal-name">Name</label>
+        <label class="text-base font-medium text-stone-700" for="animal-name">Name <span class="text-red-600">*</span></label>
         <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="animal-name" type="text" value="Mabel" />
       </div>
 
       <div class="space-y-2">
-        <p class="text-base font-medium text-stone-700">Tags</p>
-        <div class="grid grid-cols-2 gap-2">
-          <label class="inline-flex h-14 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-base font-medium text-stone-700">
-            <input type="checkbox" checked class="h-5 w-5 accent-emerald-700" />
+        <p class="text-base font-medium text-stone-700">Species <span class="text-red-600">*</span></p>
+        <div class="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Species">
+          <label class="species-option inline-flex h-14 items-center justify-center rounded-lg border border-stone-300 bg-white px-3 text-base font-medium text-stone-700">
+            <input type="radio" name="species" value="goat" checked class="sr-only" />
             Goat
           </label>
-          <label class="inline-flex h-14 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-3 text-base font-medium text-stone-700">
-            <input type="checkbox" class="h-5 w-5 accent-emerald-700" />
+          <label class="species-option inline-flex h-14 items-center justify-center rounded-lg border border-stone-300 bg-white px-3 text-base font-medium text-stone-700">
+            <input type="radio" name="species" value="pig" class="sr-only" />
             Pig
           </label>
+          <label class="species-option inline-flex h-14 items-center justify-center rounded-lg border border-stone-300 bg-white px-3 text-base font-medium text-stone-700">
+            <input type="radio" name="species" value="dog" class="sr-only" />
+            Dog
+          </label>
+          <label class="species-option inline-flex h-14 items-center justify-center rounded-lg border border-stone-300 bg-white px-3 text-base font-medium text-stone-700">
+            <input type="radio" name="species" value="cat" class="sr-only" />
+            Cat
+          </label>
         </div>
+        <p id="species-error" class="hidden text-sm font-medium text-red-700">Please select a species before saving.</p>
       </div>
 
       <div class="space-y-2">
-        <label class="text-base font-medium text-stone-700" for="custom-tag">Custom Tag</label>
-        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="custom-tag" type="text" />
+        <label class="text-base font-medium text-stone-700" for="animal-tag">Tag</label>
+        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="animal-tag" type="text" />
       </div>
 
       <div class="space-y-2">
-        <label class="text-base font-medium text-stone-700" for="birth-date">Birth date (optional)</label>
+        <label class="text-base font-medium text-stone-700" for="birth-date">Birth date</label>
         <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="birth-date" type="date" value="2024-04-12" />
       </div>
     </section>
@@ -78,7 +87,7 @@
     <div class="pointer-events-none fixed bottom-2 left-1/2 z-20 w-full max-w-lg -translate-x-1/2 px-4">
       <div class="app-card pointer-events-auto grid grid-cols-2 gap-2 rounded-xl bg-white/95 p-2 backdrop-blur-sm">
         <a class="inline-flex h-14 items-center justify-center rounded-lg border border-stone-300 bg-white text-base font-medium text-stone-700" href="animal-detail.html">Cancel</a>
-        <a class="inline-flex h-14 items-center justify-center rounded-lg bg-barn-primary text-base font-semibold text-white" href="animal-detail.html">Save</a>
+        <a class="inline-flex h-14 items-center justify-center rounded-lg bg-barn-primary text-base font-semibold text-white" href="animal-detail.html" data-save-animal>Save</a>
       </div>
     </div>
   </main>

@@ -65,3 +65,53 @@ body {
 .fab-dock a {
   pointer-events: auto;
 }
+
+.species-option {
+  transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+  cursor: pointer;
+}
+
+.species-option.is-selected {
+  background: #3f5f46;
+  color: #ffffff;
+  border-color: #3f5f46;
+}
+
+.species-option:focus-within {
+  outline: 2px solid #4c7a58;
+  outline-offset: 2px;
+}
+
+.species-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  border-width: 1px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.species-badge.goat {
+  border-color: #bbd7bf;
+  background: #edf7ee;
+  color: #355134;
+}
+
+.species-badge.pig {
+  border-color: #f4d2a6;
+  background: #fff6e8;
+  color: #8a4b1d;
+}
+
+.species-badge.dog {
+  border-color: #c6d9f6;
+  background: #eff5ff;
+  color: #274c7b;
+}
+
+.species-badge.cat {
+  border-color: #d9caee;
+  background: #f6f1ff;
+  color: #5a3b86;
+}
