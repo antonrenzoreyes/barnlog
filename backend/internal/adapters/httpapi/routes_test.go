@@ -82,7 +82,10 @@ func TestRoutes(t *testing.T) {
 func performRequest(t *testing.T, method, path string) *httptest.ResponseRecorder {
 	t.Helper()
 
-	h := Routes(testLogger())
+	h := Routes(RouteDeps{
+		Logger:        testLogger(),
+		PhotoStoreDir: t.TempDir(),
+	})
 	req := httptest.NewRequest(method, path, nil)
 	rec := httptest.NewRecorder()
 	h.ServeHTTP(rec, req)
