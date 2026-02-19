@@ -117,6 +117,13 @@ Return concrete types; accept interfaces when useful.
 Enforce formatting and static checks: gofmt, go vet, staticcheck.
 Use clear package names (short, lowercase, no stutter).
 Keep functions small and focused; avoid hidden side effects.
+Use `net.JoinHostPort` for host:port construction (never string formatting).
+Use `os.Root` / `os.OpenInRoot` when combining trusted base paths with untrusted file names.
+Prefer `runtime.AddCleanup` over `runtime.SetFinalizer` in new code.
+Prefer `sync.WaitGroup.Go` over manual `Add`/`Done` boilerplate.
+Use `go fix ./...` during Go version upgrades and review resulting diffs.
+Use `tool` directives in `go.mod` (Go 1.24+) instead of `tools.go` blank imports.
+Use `go doc` (or `go doc -http`) instead of deprecated `go tool doc`.
 
 ---
 
