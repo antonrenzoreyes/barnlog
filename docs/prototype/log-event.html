@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Barn Log - Log Event</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            barn: {
+              bg: '#f7f6f3',
+              border: '#e7e5e1',
+              muted: '#57534e',
+              primary: '#3f5f46'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root { font-size: 18px; }
+    @media (max-width: 390px) { :root { font-size: 17px; } }
+  </style>
+  <link rel="stylesheet" href="app-theme.css" />
+</head>
+<body class="bg-barn-bg text-stone-900 antialiased">
+  <main class="app-shell mx-auto min-h-screen w-full max-w-lg px-4 py-4 pb-8">
+    <header class="app-topbar app-card mb-4 flex items-start justify-between gap-3">
+      <div>
+        <h1 class="text-2xl font-semibold">Log Event</h1>
+        <p class="text-base text-barn-muted">Mabel</p>
+      </div>
+    </header>
+
+    <section class="app-card space-y-4 p-4">
+      <div>
+        <p class="mb-2 text-base font-medium text-stone-700">Event Type</p>
+        <div class="grid grid-cols-2 gap-2">
+          <input checked type="radio" id="feed" name="event-type" class="sr-only" />
+          <label for="feed" class="event-type-option rounded-lg border border-emerald-700 bg-emerald-700 px-3 py-3 text-center text-base font-medium text-white" data-event-type="feed">Feed</label>
+
+          <input type="radio" id="medication" name="event-type" class="sr-only" />
+          <label for="medication" class="event-type-option rounded-lg border border-stone-300 bg-white px-3 py-3 text-center text-base font-medium text-stone-700" data-event-type="medication">Medication</label>
+
+          <input type="radio" id="weight" name="event-type" class="sr-only" />
+          <label for="weight" class="event-type-option rounded-lg border border-stone-300 bg-white px-3 py-3 text-center text-base font-medium text-stone-700" data-event-type="weight">Weight</label>
+
+          <input type="radio" id="note" name="event-type" class="sr-only" />
+          <label for="note" class="event-type-option rounded-lg border border-stone-300 bg-white px-3 py-3 text-center text-base font-medium text-stone-700" data-event-type="note">Note</label>
+        </div>
+      </div>
+
+      <div class="field space-y-2">
+        <label class="text-base font-medium text-stone-700" for="amount">Feed Amount (optional)</label>
+        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="amount" type="text" placeholder="e.g., 1.5 scoops" />
+      </div>
+
+      <div class="field space-y-2">
+        <label class="text-base font-medium text-stone-700" for="med-type">Medication Type</label>
+        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="med-type" type="text" placeholder="e.g., Dewormer" />
+      </div>
+
+      <div class="field space-y-2">
+        <label class="text-base font-medium text-stone-700" for="dosage">Dosage</label>
+        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="dosage" type="text" placeholder="e.g., 8 ml oral" />
+      </div>
+
+      <div class="field space-y-2">
+        <label class="text-base font-medium text-stone-700" for="weight-value">Weight</label>
+        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="weight-value" type="number" placeholder="e.g., 124" />
+      </div>
+
+      <div class="field space-y-2">
+        <label class="text-base font-medium text-stone-700" for="note-text">Note</label>
+        <textarea class="w-full rounded-lg border border-stone-300 px-3 py-2 text-base outline-none focus:border-stone-400" id="note-text" rows="4" placeholder="Quick observations for care tracking"></textarea>
+      </div>
+
+      <div class="field space-y-2">
+        <label class="text-base font-medium text-stone-700" for="event-time">Timestamp</label>
+        <input class="h-14 w-full rounded-lg border border-stone-300 px-3 text-base outline-none focus:border-stone-400" id="event-time" type="datetime-local" value="2026-02-19T08:30" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-1">
+        <a class="inline-flex h-14 items-center justify-center rounded-lg border border-stone-300 bg-white text-base font-medium text-stone-700" href="animal-detail.html">Cancel</a>
+        <a class="inline-flex h-14 items-center justify-center rounded-lg bg-barn-primary text-base font-semibold text-white" href="animal-detail.html">Save Event</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="app.js"></script>
+</body>
+</html>
