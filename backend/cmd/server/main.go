@@ -48,7 +48,7 @@ func run() error {
 	} else {
 		logger.Info("auto migration disabled")
 	}
-	srv := newHTTPServer(cfg, buildRouter(logger))
+	srv := newHTTPServer(cfg, buildRouter(cfg, logger))
 
 	logger.Info(
 		"http server starting",
@@ -76,13 +76,16 @@ func run() error {
 	return nil
 }
 
-func buildRouter(logger *slog.Logger) http.Handler {
+func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(30 * time.Second))
-	r.Mount("/", httpapi.Routes(logger))
+	r.Mount("/", httpapi.Routes(httpapi.RouteDeps{
+		Logger:        logger,
+		PhotoStoreDir: cfg.PhotoDir,
+	}))
 	return r
 }
 
