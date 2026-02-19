@@ -79,6 +79,15 @@ Use when logic becomes non-trivial.
 Public: HTTP + OpenAPI  
 Internal: package boundaries and clear interfaces (no gRPC by default in this monolith)
 
+### HTTP Handler Rule
+
+Handlers are transport adapters and must stay thin.
+
+- Parse and validate transport input (headers/path/query/body).
+- Call application/domain services for business logic.
+- Map service/domain errors to HTTP status + response payload.
+- Do not embed business rules, orchestration-heavy flows, or persistence logic directly in handlers.
+
 ---
 
 ## 🔐 Authentication
