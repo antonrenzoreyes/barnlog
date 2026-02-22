@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="sqlc" pattern="file[barnlog]:backend/sqlc.yaml||file[barnlog]:backend/db/queries/*" />
-</component>
