@@ -79,6 +79,25 @@ func TestRoutes(t *testing.T) {
 	}
 }
 
+func TestRoutesSwaggerUI(t *testing.T) {
+	t.Parallel()
+
+	h := Routes(RouteDeps{
+		Logger:        testLogger(),
+		PhotoStoreDir: t.TempDir(),
+	})
+	req := httptest.NewRequest(http.MethodGet, "/swagger/index.html", nil)
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+
+	if rec.Code != http.StatusOK {
+		t.Fatalf("expected status %d, got %d", http.StatusOK, rec.Code)
+	}
+	if got := rec.Header().Get("Content-Type"); got == "" {
+		t.Fatalf("expected non-empty content-type")
+	}
+}
+
 func performRequest(t *testing.T, method, path string) *httptest.ResponseRecorder {
 	t.Helper()
 

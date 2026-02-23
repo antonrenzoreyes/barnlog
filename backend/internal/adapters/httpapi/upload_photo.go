@@ -22,6 +22,19 @@ var allowedPhotoContentTypes = map[string]struct{}{
 	"image/gif":  {},
 }
 
+// uploadPhoto godoc
+//
+// @Summary Upload photo
+// @Description Uploads a photo file and returns a generated photo_id.
+// @Tags uploads
+// @Accept multipart/form-data
+// @Produce json
+// @Param photo formData file true "Photo file"
+// @Success 201 {object} uploadPhotoResponse
+// @Failure 400 {object} errorResponse
+// @Failure 413 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /uploads/photos [post]
 func (h uploadHandlers) uploadPhoto(w http.ResponseWriter, r *http.Request) {
 	r.Body = http.MaxBytesReader(w, r.Body, maxUploadRequestBytes)
 
