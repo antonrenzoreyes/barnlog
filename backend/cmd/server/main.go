@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -11,9 +12,11 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
+	"barnlog/backend/docs"
 	"barnlog/backend/internal/adapters/httpapi"
 	"barnlog/backend/internal/infrastructure/config"
 
@@ -24,9 +27,13 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
+// @title Barnlog Backend API
+// @version 1.0
+// @description Barnlog backend HTTP API.
+// @servers.url http://localhost:8080
 func main() {
 	if err := run(); err != nil {
-		fmt.Fprintf(os.Stderr, "server failed: %v\n", err)
+		_, _ = fmt.Fprintf(os.Stderr, "server failed: %v\n", err)
 		os.Exit(1)
 	}
 }
@@ -82,11 +89,74 @@ func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(30 * time.Second))
+	r.Get("/swagger/openapi.json", openAPIDoc)
 	r.Mount("/", httpapi.Routes(httpapi.RouteDeps{
 		Logger:        logger,
 		PhotoStoreDir: cfg.PhotoDir,
 	}))
 	return r
+}
+
+func openAPIDoc(w http.ResponseWriter, _ *http.Request) {
+	doc := docs.SwaggerInfo.ReadDoc()
+
+	var payload map[string]any
+	if err := json.Unmarshal([]byte(doc), &payload); err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+	if version, ok := payload["openapi"].(string); ok && strings.HasPrefix(version, "3.1.") {
+		payload["openapi"] = "3.0.3"
+	}
+	normalizeUploadPhotoRequestBody(payload)
+	body, err := json.Marshal(payload)
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_, _ = w.Write(body)
+}
+
+func normalizeUploadPhotoRequestBody(payload map[string]any) {
+	paths, ok := payload["paths"].(map[string]any)
+	if !ok {
+		return
+	}
+	uploads, ok := paths["/uploads/photos"].(map[string]any)
+	if !ok {
+		return
+	}
+	post, ok := uploads["post"].(map[string]any)
+	if !ok {
+		return
+	}
+	requestBody, ok := post["requestBody"].(map[string]any)
+	if !ok {
+		return
+	}
+	content, ok := requestBody["content"].(map[string]any)
+	if !ok {
+		return
+	}
+	content["multipart/form-data"] = map[string]any{
+		"schema": map[string]any{
+			"type":     "object",
+			"required": []string{"photo"},
+			"properties": map[string]any{
+				"photo": map[string]any{
+					"type":        "string",
+					"format":      "binary",
+					"description": "Photo file to upload",
+				},
+			},
+		},
+		"example": map[string]any{
+			"photo": "(binary file)",
+		},
+	}
+	delete(content, "application/x-www-form-urlencoded")
 }
 
 func newHTTPServer(cfg config.Config, handler http.Handler) *http.Server {

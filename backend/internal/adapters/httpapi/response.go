@@ -16,3 +16,7 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 	w.WriteHeader(status)
 	_, _ = w.Write(append(body, '\n'))
 }
+
+func writeError(w http.ResponseWriter, status int, code string) {
+	writeJSON(w, status, errorResponse{Error: code})
+}

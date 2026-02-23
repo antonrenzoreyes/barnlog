@@ -1,0 +1,115 @@
+components:
+  schemas:
+    httpapi.errorResponse:
+      properties:
+        error:
+          example: invalid_json
+          type: string
+      type: object
+    httpapi.readyResponse:
+      properties:
+        status:
+          example: ready
+          type: string
+        timestamp:
+          example: "2026-02-22T20:32:13Z"
+          format: date-time
+          type: string
+      type: object
+    httpapi.statusResponse:
+      properties:
+        status:
+          example: ok
+          type: string
+      type: object
+    httpapi.uploadPhotoResponse:
+      properties:
+        content_type:
+          example: image/jpeg
+          type: string
+        photo_id:
+          example: photo_123
+          type: string
+        size_bytes:
+          example: 248123
+          type: integer
+      type: object
+externalDocs:
+  description: ""
+  url: ""
+info:
+  description: Barnlog backend HTTP API.
+  title: Barnlog Backend API
+  version: "1.0"
+openapi: 3.1.0
+paths:
+  /healthz:
+    get:
+      description: Returns service liveness status.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.statusResponse'
+          description: OK
+      summary: Health check
+      tags:
+      - system
+  /readyz:
+    get:
+      description: Returns service readiness status and current UTC timestamp.
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.readyResponse'
+          description: OK
+      summary: Readiness check
+      tags:
+      - system
+  /uploads/photos:
+    post:
+      description: Uploads a photo file and returns a generated photo_id.
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              title: photo
+              type: file
+          multipart/form-data:
+            schema:
+              type: object
+        description: Photo file
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.uploadPhotoResponse'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Bad Request
+        "413":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Request Entity Too Large
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Internal Server Error
+      summary: Upload photo
+      tags:
+      - uploads
+servers:
+- url: http://localhost:8080

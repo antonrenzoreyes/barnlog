@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
 
 // RouteDeps contains dependencies required to build HTTP routes.
@@ -23,6 +24,9 @@ func Routes(deps RouteDeps) http.Handler {
 	r.Get("/healthz", h.healthz)
 	r.Get("/readyz", h.readyz)
 	r.Post("/uploads/photos", upload.uploadPhoto)
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger/openapi.json"),
+	))
 	r.NotFound(h.notFound)
 
 	return r
