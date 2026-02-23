@@ -1,5 +1,49 @@
 components:
   schemas:
+    httpapi.createAnimalRequest:
+      properties:
+        birthdate:
+          example: "2021-03-04"
+          format: date
+          type: string
+        name:
+          example: Nanny
+          type: string
+        photo_id:
+          example: photo_1
+          type: string
+        species:
+          example: goat
+          type: string
+        tag:
+          example: G-7
+          type: string
+      type: object
+    httpapi.createAnimalResponse:
+      properties:
+        animal_id:
+          example: animal_123
+          type: string
+        birthdate:
+          example: "2021-03-04"
+          format: date
+          type: string
+        event_id:
+          example: event_123
+          type: string
+        name:
+          example: Nanny
+          type: string
+        photo_id:
+          example: photo_1
+          type: string
+        species:
+          example: goat
+          type: string
+        tag:
+          example: G-7
+          type: string
+      type: object
     httpapi.errorResponse:
       properties:
         error:
@@ -43,6 +87,71 @@ info:
   version: "1.0"
 openapi: 3.1.0
 paths:
+  /animals:
+    post:
+      description: Creates an animal by appending an animal.created event.
+      parameters:
+      - description: Idempotency request key
+        in: header
+        name: X-Request-Id
+        schema:
+          type: string
+      - description: Request source
+        in: header
+        name: X-Barnlog-Source
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - type: object
+              - $ref: '#/components/schemas/httpapi.createAnimalRequest'
+                description: Create animal payload
+                summary: request
+        description: Create animal payload
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.createAnimalResponse'
+          description: Idempotent replay
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.createAnimalResponse'
+          description: Created
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Bad Request
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Conflict
+        "415":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Unsupported Media Type
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/httpapi.errorResponse'
+          description: Internal Server Error
+      summary: Create animal
+      tags:
+      - animals
   /healthz:
     get:
       description: Returns service liveness status.

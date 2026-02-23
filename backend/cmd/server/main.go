@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -23,8 +24,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	gomigrate "github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "modernc.org/sqlite"
 )
 
 // @title Barnlog Backend API
@@ -55,7 +57,18 @@ func run() error {
 	} else {
 		logger.Info("auto migration disabled")
 	}
-	srv := newHTTPServer(cfg, buildRouter(cfg, logger))
+	db, err := openSQLiteDB(cfg)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := db.Close(); closeErr != nil {
+			logger.Warn("close sqlite db", slog.Any("error", closeErr))
+		}
+	}()
+
+	services := newServices(cfg, db)
+	srv := newHTTPServer(cfg, buildRouter(cfg, logger, services))
 
 	logger.Info(
 		"http server starting",
@@ -83,7 +96,7 @@ func run() error {
 	return nil
 }
 
-func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
+func buildRouter(cfg config.Config, logger *slog.Logger, services Services) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
@@ -93,6 +106,7 @@ func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
 	r.Mount("/", httpapi.Routes(httpapi.RouteDeps{
 		Logger:        logger,
 		PhotoStoreDir: cfg.PhotoDir,
+		AnimalWriter:  services.AnimalWriter,
 	}))
 	return r
 }
@@ -108,6 +122,7 @@ func openAPIDoc(w http.ResponseWriter, _ *http.Request) {
 	if version, ok := payload["openapi"].(string); ok && strings.HasPrefix(version, "3.1.") {
 		payload["openapi"] = "3.0.3"
 	}
+	normalizeAnimalsRequestBody(payload)
 	normalizeUploadPhotoRequestBody(payload)
 	body, err := json.Marshal(payload)
 	if err != nil {
@@ -157,6 +172,60 @@ func normalizeUploadPhotoRequestBody(payload map[string]any) {
 		},
 	}
 	delete(content, "application/x-www-form-urlencoded")
+}
+
+func normalizeAnimalsRequestBody(payload map[string]any) {
+	paths, ok := payload["paths"].(map[string]any)
+	if !ok {
+		return
+	}
+	animals, ok := paths["/animals"].(map[string]any)
+	if !ok {
+		return
+	}
+	post, ok := animals["post"].(map[string]any)
+	if !ok {
+		return
+	}
+	requestBody, ok := post["requestBody"].(map[string]any)
+	if !ok {
+		return
+	}
+	content, ok := requestBody["content"].(map[string]any)
+	if !ok {
+		return
+	}
+	applicationJSON, ok := content["application/json"].(map[string]any)
+	if !ok {
+		return
+	}
+	applicationJSON["schema"] = map[string]any{
+		"$ref": "#/components/schemas/httpapi.createAnimalRequest",
+	}
+	applicationJSON["example"] = map[string]any{
+		"name":      "Nanny",
+		"species":   "goat",
+		"tag":       "G-7",
+		"birthdate": "2021-03-04",
+		"photo_id":  "photo_1",
+	}
+}
+
+func openSQLiteDB(cfg config.Config) (*sql.DB, error) {
+	dbPath, err := filepath.Abs(cfg.DBPath)
+	if err != nil {
+		return nil, fmt.Errorf("resolve db path: %w", err)
+	}
+
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("open sqlite: %w", err)
+	}
+	if err := db.Ping(); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("ping sqlite: %w", err)
+	}
+	return db, nil
 }
 
 func newHTTPServer(cfg config.Config, handler http.Handler) *http.Server {
@@ -211,7 +280,7 @@ func runMigrations(logger *slog.Logger, cfg config.Config) error {
 		return fmt.Errorf("create db directory: %w", err)
 	}
 
-	dbURL := (&url.URL{Scheme: "sqlite3", Path: dbPath}).String()
+	dbURL := (&url.URL{Scheme: "sqlite", Path: dbPath}).String()
 	srcURL := (&url.URL{Scheme: "file", Path: migrationsPath}).String()
 
 	logger.Info("running migrations", slog.String("database", dbURL), slog.String("source", srcURL))
