@@ -40,11 +40,11 @@ func (h uploadHandlers) uploadPhoto(w http.ResponseWriter, r *http.Request) {
 
 	if err := r.ParseMultipartForm(maxPhotoSizeBytes + 512); err != nil {
 		if isRequestTooLarge(err) {
-			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]any{"error": "photo_too_large"})
+			writeError(w, http.StatusRequestEntityTooLarge, "photo_too_large")
 			return
 		}
 
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "invalid_multipart"})
+		writeError(w, http.StatusBadRequest, "invalid_multipart")
 		return
 	}
 
@@ -58,18 +58,18 @@ func (h uploadHandlers) uploadPhoto(w http.ResponseWriter, r *http.Request) {
 
 	if h.photoStore == nil {
 		h.logger.Error("photo store is nil")
-		writeJSON(w, http.StatusInternalServerError, map[string]any{"error": "internal_error"})
+		writeError(w, http.StatusInternalServerError, "internal_error")
 		return
 	}
 
 	file, _, err := r.FormFile(photoFieldName)
 	if err != nil {
 		if isRequestTooLarge(err) {
-			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]any{"error": "photo_too_large"})
+			writeError(w, http.StatusRequestEntityTooLarge, "photo_too_large")
 			return
 		}
 
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "photo_required"})
+		writeError(w, http.StatusBadRequest, "photo_required")
 		return
 	}
 	defer func() {
@@ -81,18 +81,18 @@ func (h uploadHandlers) uploadPhoto(w http.ResponseWriter, r *http.Request) {
 	sniffBuffer := make([]byte, 512)
 	sniffBytesRead, sniffErr := io.ReadFull(file, sniffBuffer)
 	if sniffErr != nil && !errors.Is(sniffErr, io.EOF) && !errors.Is(sniffErr, io.ErrUnexpectedEOF) {
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "invalid_photo"})
+		writeError(w, http.StatusBadRequest, "invalid_photo")
 		return
 	}
 	if sniffBytesRead == 0 {
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "invalid_photo"})
+		writeError(w, http.StatusBadRequest, "invalid_photo")
 		return
 	}
 
 	sniffBuffer = sniffBuffer[:sniffBytesRead]
 	contentType := http.DetectContentType(sniffBuffer)
 	if _, ok := allowedPhotoContentTypes[contentType]; !ok {
-		writeJSON(w, http.StatusBadRequest, map[string]any{"error": "unsupported_photo_type"})
+		writeError(w, http.StatusBadRequest, "unsupported_photo_type")
 		return
 	}
 
@@ -103,19 +103,19 @@ func (h uploadHandlers) uploadPhoto(w http.ResponseWriter, r *http.Request) {
 	)
 	if err != nil {
 		if errors.Is(err, errPhotoTooLarge) {
-			writeJSON(w, http.StatusRequestEntityTooLarge, map[string]any{"error": "photo_too_large"})
+			writeError(w, http.StatusRequestEntityTooLarge, "photo_too_large")
 			return
 		}
 
 		h.logger.Error("save photo", slog.Any("error", err))
-		writeJSON(w, http.StatusInternalServerError, map[string]any{"error": "internal_error"})
+		writeError(w, http.StatusInternalServerError, "internal_error")
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, map[string]any{
-		"photo_id":     photoID,
-		"content_type": contentType,
-		"size_bytes":   totalBytes,
+	writeJSON(w, http.StatusCreated, uploadPhotoResponse{
+		PhotoID:     photoID,
+		ContentType: contentType,
+		SizeBytes:   totalBytes,
 	})
 }
 

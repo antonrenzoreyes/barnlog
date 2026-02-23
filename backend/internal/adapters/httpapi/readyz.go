@@ -14,8 +14,8 @@ import (
 // @Success 200 {object} readyResponse
 // @Router /readyz [get]
 func (h handlers) readyz(w http.ResponseWriter, _ *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]any{
-		"status":    "ready",
-		"timestamp": time.Now().UTC().Format(time.RFC3339),
+	writeJSON(w, http.StatusOK, readyResponse{
+		Status:    "ready",
+		Timestamp: time.Now().UTC().Format(time.RFC3339),
 	})
 }

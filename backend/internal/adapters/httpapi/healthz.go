@@ -11,5 +11,5 @@ import "net/http"
 // @Success 200 {object} statusResponse
 // @Router /healthz [get]
 func (h handlers) healthz(w http.ResponseWriter, _ *http.Request) {
-	writeJSON(w, http.StatusOK, map[string]any{"status": "ok"})
+	writeJSON(w, http.StatusOK, statusResponse{Status: "ok"})
 }
