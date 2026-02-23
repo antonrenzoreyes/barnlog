@@ -19,10 +19,10 @@ Use this skill when the user asks to plan, create, or organize feature work thro
 
 ## Tooling
 
-- Use `github` MCP for issue creation, updates, linking, and tracking.
-- Use `filesystem` MCP for doc and template edits.
-- Use `git` MCP for local change review and commit workflow.
-- Use GitHub native sub-issues (via `github` MCP) for Epic → Story and Story → Task hierarchy.
+- Use `gh` CLI for issue creation, updates, linking, and tracking.
+- Use local filesystem edits for doc and template changes.
+- Use `git` CLI for local change review and commit workflow.
+- Use GitHub native sub-issues (via `gh` GraphQL/API commands) for Epic → Story and Story → Task hierarchy.
 
 ## Workflow
 
