@@ -147,43 +147,6 @@ sqlc generate -f backend/sqlc.yaml
 Generated package output:
 - `backend/internal/infrastructure/sqlite/sqlc`
 
-## Repository Layout (Current)
-
-```text
-barnlog/
-├─ go.mod
-├─ backend/
-│  ├─ sqlc.yaml
-│  ├─ cmd/
-│  │  └─ server/
-│  ├─ db/
-│  │  ├─ migrations/
-│  │  └─ schema.sql
-│  └─ internal/
-│     ├─ domain/
-│     ├─ application/
-│     ├─ ports/
-│     ├─ adapters/
-│     └─ infrastructure/
-├─ frontend/
-│  ├─ src/
-│  ├─ e2e/
-│  ├─ static/
-│  ├─ package.json
-│  ├─ svelte.config.js
-│  └─ vite.config.ts
-├─ .zed/
-│  ├─ settings.json
-│  └─ tasks.json
-├─ .github/
-│  └─ workflows/
-├─ scripts/
-├─ .githooks/
-├─ logs/
-└─ .aiassistant/
-   └─ rules/
-```
-
 ## Backend Layering Guide
 
 The backend is split to keep business rules stable while transport and storage remain replaceable.
