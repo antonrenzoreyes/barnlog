@@ -1,0 +1,12 @@
+[
+  {
+    "label": "run frontend",
+    "command": "bun run dev",
+    "cwd": "$ZED_WORKTREE_ROOT/frontend"
+  },
+  {
+    "label": "format frontend",
+    "command": "bun run format",
+    "cwd": "$ZED_WORKTREE_ROOT/frontend"
+  }
+]

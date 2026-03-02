@@ -7,7 +7,8 @@ Current repository status is bootstrap-stage: a minimal Go app exists, with proj
 ## Tech Stack
 
 - Backend: Go 1.26.x, `net/http` + `chi`, SQLite, `sqlc`, `slog`
-- Frontend: Svelte + TypeScript, Vite, Tailwind CSS, IndexedDB (Dexie)
+- Frontend: Bun, SvelteKit 2 (Svelte 5) + TypeScript, Vite 7, Tailwind CSS 4, IndexedDB (Dexie)
+- Frontend testing: Vitest (unit/component) + Playwright (e2e)
 - Architecture: pragmatic event-driven model (append-only events first, projections added as needed)
 
 See full stack decisions in `.aiassistant/rules/STACK.md`.
@@ -37,6 +38,7 @@ Planning artifacts are managed with the custom `barnboard` skill.
 ## Prerequisites
 
 - Go 1.26+
+- Bun (for frontend install, dev, lint, build, and tests)
 - `migrate` CLI (`golang-migrate`) for manual migration commands and schema snapshot generation
 - `sqlite3` CLI for schema snapshot generation
 
@@ -44,6 +46,14 @@ Planning artifacts are managed with the custom `barnboard` skill.
 
 ```bash
 go run ./backend/cmd/server
+```
+
+Frontend app:
+
+```bash
+cd frontend
+bun install
+bun run dev
 ```
 
 ## Backend Runtime
@@ -137,33 +147,6 @@ sqlc generate -f backend/sqlc.yaml
 Generated package output:
 - `backend/internal/infrastructure/sqlite/sqlc`
 
-## Repository Layout (Current)
-
-```text
-barnlog/
-├─ go.mod
-├─ backend/
-│  ├─ sqlc.yaml
-│  ├─ cmd/
-│  │  └─ server/
-│  ├─ db/
-│  │  ├─ migrations/
-│  │  └─ schema.sql
-│  └─ internal/
-│     ├─ domain/
-│     ├─ application/
-│     ├─ ports/
-│     ├─ adapters/
-│     └─ infrastructure/
-├─ scripts/
-├─ .githooks/
-├─ logs/
-├─ .ai/
-│  └─ mcp/
-└─ .aiassistant/
-   └─ rules/
-```
-
 ## Backend Layering Guide
 
 The backend is split to keep business rules stable while transport and storage remain replaceable.
@@ -201,4 +184,4 @@ This keeps the core business layer testable without HTTP or database setup.
 
 - Add HTTP routes and domain/application layers per Go standards
 - Introduce migrations, queries, and event-store schema
-- Add frontend app scaffold and API integration
+- Expand frontend features and API integration
