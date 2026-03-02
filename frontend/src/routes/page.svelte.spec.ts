@@ -7,7 +7,7 @@ describe('/+page.svelte', () => {
 	it('should render h1', async () => {
 		render(Page);
 
-		const heading = page.getByRole('heading', { level: 1 });
+		const heading = page.getByRole('heading', { level: 1, name: 'Welcome to SvelteKit' });
 		await expect.element(heading).toBeInTheDocument();
 	});
 });

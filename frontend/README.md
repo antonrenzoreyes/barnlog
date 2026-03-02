@@ -20,13 +20,17 @@ bun x sv@0.12.4 create --template minimal --types ts --add prettier eslint vites
 
 ## Developing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn` or `bun install`), start a development server:
 
 ```sh
 npm run dev
+# or
+bun run dev
 
 # or start the server and open the app in a new browser tab
 npm run dev -- --open
+# or
+bun run dev --open
 ```
 
 ## Building
