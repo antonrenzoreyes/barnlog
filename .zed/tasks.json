@@ -8,5 +8,17 @@
     "label": "format frontend",
     "command": "bun run format",
     "cwd": "$ZED_WORKTREE_ROOT/frontend"
+  },
+  {
+    "label": "backend: go run",
+    "command": "go",
+    "args": ["run", "./backend/cmd/server"],
+    "cwd": "$ZED_WORKTREE_ROOT"
+  },
+  {
+    "label": "backend: go test",
+    "command": "go",
+    "args": ["test", "./backend/..."],
+    "cwd": "$ZED_WORKTREE_ROOT"
   }
 ]
