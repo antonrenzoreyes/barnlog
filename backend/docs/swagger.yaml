@@ -34,6 +34,7 @@ components:
                     example: 248123
                     type: integer
             type: object
+    securitySchemes: {}
 info:
     description: Barnlog backend HTTP API.
     title: Barnlog Backend API
@@ -113,5 +114,6 @@ paths:
             summary: Upload photo
             tags:
                 - uploads
+security: []
 servers:
     - url: http://localhost:8080

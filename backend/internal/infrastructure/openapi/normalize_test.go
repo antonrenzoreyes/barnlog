@@ -32,6 +32,15 @@ func TestNormalize(t *testing.T) {
 	if _, exists := payload["externalDocs"]; exists {
 		t.Fatalf("did not expect externalDocs when url is empty")
 	}
+	if security, ok := payload["security"].([]any); !ok || len(security) != 0 {
+		t.Fatalf("expected root security to be an empty array")
+	}
+
+	components := payload["components"].(map[string]any)
+	securitySchemes := components["securitySchemes"].(map[string]any)
+	if len(securitySchemes) != 0 {
+		t.Fatalf("expected empty securitySchemes, got %v entries", len(securitySchemes))
+	}
 
 	paths := payload["paths"].(map[string]any)
 	uploads := paths["/uploads/photos"].(map[string]any)
@@ -72,5 +81,36 @@ func TestNormalizeKeepsValidExternalDocs(t *testing.T) {
 
 	if _, exists := payload["externalDocs"]; !exists {
 		t.Fatalf("expected externalDocs to remain when url is valid")
+	}
+}
+
+func TestNormalizePreservesExistingMultipartMetadata(t *testing.T) {
+	payload := map[string]any{
+		"paths": map[string]any{
+			"/uploads/photos": map[string]any{
+				"post": map[string]any{
+					"requestBody": map[string]any{
+						"content": map[string]any{
+							"multipart/form-data": map[string]any{
+								"encoding": map[string]any{"photo": map[string]any{"contentType": "image/jpeg"}},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	Normalize(payload)
+
+	paths := payload["paths"].(map[string]any)
+	uploads := paths["/uploads/photos"].(map[string]any)
+	post := uploads["post"].(map[string]any)
+	requestBody := post["requestBody"].(map[string]any)
+	content := requestBody["content"].(map[string]any)
+	multipart := content["multipart/form-data"].(map[string]any)
+
+	if _, ok := multipart["encoding"].(map[string]any); !ok {
+		t.Fatalf("expected existing multipart metadata to be preserved")
 	}
 }
