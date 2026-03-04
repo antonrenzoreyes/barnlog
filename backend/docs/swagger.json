@@ -52,15 +52,16 @@
             }
         }
     },
+    "externalDocs": {
+        "description": "",
+        "url": ""
+    },
     "info": {
         "description": "Barnlog backend HTTP API.",
         "title": "Barnlog Backend API",
         "version": "1.0"
     },
-    "externalDocs": {
-        "description": "",
-        "url": ""
-    },
+    "openapi": "3.0.3",
     "paths": {
         "/healthz": {
             "get": {
@@ -109,14 +110,21 @@
                 "description": "Uploads a photo file and returns a generated photo_id.",
                 "requestBody": {
                     "content": {
-                        "application/x-www-form-urlencoded": {
-                            "schema": {
-                                "title": "photo",
-                                "type": "file"
-                            }
-                        },
                         "multipart/form-data": {
+                            "example": {
+                                "photo": "(binary file)"
+                            },
                             "schema": {
+                                "properties": {
+                                    "photo": {
+                                        "description": "Photo file to upload",
+                                        "format": "binary",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "photo"
+                                ],
                                 "type": "object"
                             }
                         }
@@ -173,7 +181,6 @@
             }
         }
     },
-    "openapi": "3.1.0",
     "servers": [
         {
             "url": "http://localhost:8080"

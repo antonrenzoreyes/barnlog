@@ -8,6 +8,7 @@ db-schema-check: db-schema
 
 api-docs:
 	go tool swag init --v3.1 -g main.go -d backend/cmd/server,backend/internal/adapters/httpapi --parseInternal -o backend/docs
+	go run ./backend/cmd/openapi-normalize -json backend/docs/swagger.json -yaml backend/docs/swagger.yaml
 
 install-hooks:
 	mkdir -p .git/hooks

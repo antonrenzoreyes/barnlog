@@ -12,13 +12,13 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
-	"strings"
 	"syscall"
 	"time"
 
 	"barnlog/backend/docs"
 	"barnlog/backend/internal/adapters/httpapi"
 	"barnlog/backend/internal/infrastructure/config"
+	"barnlog/backend/internal/infrastructure/openapi"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -105,10 +105,7 @@ func openAPIDoc(w http.ResponseWriter, _ *http.Request) {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
-	if version, ok := payload["openapi"].(string); ok && strings.HasPrefix(version, "3.1.") {
-		payload["openapi"] = "3.0.3"
-	}
-	normalizeUploadPhotoRequestBody(payload)
+	openapi.Normalize(payload)
 	body, err := json.Marshal(payload)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -117,46 +114,6 @@ func openAPIDoc(w http.ResponseWriter, _ *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_, _ = w.Write(body)
-}
-
-func normalizeUploadPhotoRequestBody(payload map[string]any) {
-	paths, ok := payload["paths"].(map[string]any)
-	if !ok {
-		return
-	}
-	uploads, ok := paths["/uploads/photos"].(map[string]any)
-	if !ok {
-		return
-	}
-	post, ok := uploads["post"].(map[string]any)
-	if !ok {
-		return
-	}
-	requestBody, ok := post["requestBody"].(map[string]any)
-	if !ok {
-		return
-	}
-	content, ok := requestBody["content"].(map[string]any)
-	if !ok {
-		return
-	}
-	content["multipart/form-data"] = map[string]any{
-		"schema": map[string]any{
-			"type":     "object",
-			"required": []string{"photo"},
-			"properties": map[string]any{
-				"photo": map[string]any{
-					"type":        "string",
-					"format":      "binary",
-					"description": "Photo file to upload",
-				},
-			},
-		},
-		"example": map[string]any{
-			"photo": "(binary file)",
-		},
-	}
-	delete(content, "application/x-www-form-urlencoded")
 }
 
 func newHTTPServer(cfg config.Config, handler http.Handler) *http.Server {
