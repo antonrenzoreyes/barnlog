@@ -10,6 +10,16 @@
     "cwd": "$ZED_WORKTREE_ROOT/frontend"
   },
   {
+    "label": "lint frontend",
+    "command": "bun run lint",
+    "cwd": "$ZED_WORKTREE_ROOT/frontend"
+  },
+  {
+    "label": "check frontend",
+    "command": "bun run check",
+    "cwd": "$ZED_WORKTREE_ROOT/frontend"
+  },
+  {
     "label": "backend: go run",
     "command": "go",
     "args": ["run", "./backend/cmd/server"],
