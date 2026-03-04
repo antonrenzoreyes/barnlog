@@ -5,6 +5,10 @@ import "testing"
 func TestNormalize(t *testing.T) {
 	payload := map[string]any{
 		"openapi": "3.1.0",
+		"externalDocs": map[string]any{
+			"description": "",
+			"url":         "",
+		},
 		"paths": map[string]any{
 			"/uploads/photos": map[string]any{
 				"post": map[string]any{
@@ -24,6 +28,9 @@ func TestNormalize(t *testing.T) {
 
 	if got := payload["openapi"]; got != "3.0.3" {
 		t.Fatalf("expected openapi 3.0.3, got %v", got)
+	}
+	if _, exists := payload["externalDocs"]; exists {
+		t.Fatalf("did not expect externalDocs when url is empty")
 	}
 
 	paths := payload["paths"].(map[string]any)
@@ -50,5 +57,20 @@ func TestNormalize(t *testing.T) {
 	}
 	if photo["format"] != "binary" {
 		t.Fatalf("expected photo format binary, got %v", photo["format"])
+	}
+}
+
+func TestNormalizeKeepsValidExternalDocs(t *testing.T) {
+	payload := map[string]any{
+		"openapi": "3.0.3",
+		"externalDocs": map[string]any{
+			"url": "https://example.com/docs",
+		},
+	}
+
+	Normalize(payload)
+
+	if _, exists := payload["externalDocs"]; !exists {
+		t.Fatalf("expected externalDocs to remain when url is valid")
 	}
 }
