@@ -5,6 +5,8 @@ on:
     branches: [master]
     paths:
       - "frontend/**"
+      - "backend/docs/swagger.yaml"
+      - "backend/docs/swagger.json"
       - ".github/workflows/frontend-ci.yml"
 
 permissions:
@@ -30,6 +32,9 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Verify generated API types
+        run: bun run check:api-types
 
       - name: Type check
         run: bun run check
