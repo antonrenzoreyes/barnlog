@@ -1,3 +1,4 @@
+// Command openapi-normalize normalizes generated OpenAPI docs for Barnlog.
 package main
 
 import (
@@ -26,49 +27,44 @@ func main() {
 	}
 }
 
+type unmarshalFn func([]byte, any) error
+type marshalFn func(any) ([]byte, error)
+
 func normalizeJSONFile(path string) error {
-	content, err := os.ReadFile(path)
-	if err != nil {
-		return fmt.Errorf("read %s: %w", path, err)
-	}
-
-	var payload map[string]any
-	if err := json.Unmarshal(content, &payload); err != nil {
-		return fmt.Errorf("unmarshal %s: %w", path, err)
-	}
-
-	openapi.Normalize(payload)
-
-	normalized, err := json.MarshalIndent(payload, "", "    ")
-	if err != nil {
-		return fmt.Errorf("marshal %s: %w", path, err)
-	}
-	normalized = append(normalized, '\n')
-
-	if err := os.WriteFile(path, normalized, 0o644); err != nil {
-		return fmt.Errorf("write %s: %w", path, err)
-	}
-	return nil
+	return normalizeFile(path, json.Unmarshal, func(v any) ([]byte, error) {
+		b, err := json.MarshalIndent(v, "", "    ")
+		if err != nil {
+			return nil, err
+		}
+		return append(b, '\n'), nil
+	})
 }
 
 func normalizeYAMLFile(path string) error {
+	return normalizeFile(path, yaml.Unmarshal, yaml.Marshal)
+}
+
+func normalizeFile(path string, unmarshal unmarshalFn, marshal marshalFn) error {
+	//nolint:gosec // path is controlled by local tooling (Makefile/flags) in this repository.
 	content, err := os.ReadFile(path)
 	if err != nil {
 		return fmt.Errorf("read %s: %w", path, err)
 	}
 
 	var payload map[string]any
-	if err := yaml.Unmarshal(content, &payload); err != nil {
+	if err := unmarshal(content, &payload); err != nil {
 		return fmt.Errorf("unmarshal %s: %w", path, err)
 	}
 
 	openapi.Normalize(payload)
 
-	normalized, err := yaml.Marshal(payload)
+	normalized, err := marshal(payload)
 	if err != nil {
 		return fmt.Errorf("marshal %s: %w", path, err)
 	}
-	if err := os.WriteFile(path, normalized, 0o644); err != nil {
+
+	//nolint:gosec // generated API docs are intended repo artifacts, not secrets.
+	if err := os.WriteFile(path, normalized, 0o600); err != nil {
 		return fmt.Errorf("write %s: %w", path, err)
 	}
 	return nil

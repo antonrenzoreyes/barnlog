@@ -52,10 +52,6 @@
             }
         }
     },
-    "externalDocs": {
-        "description": "",
-        "url": ""
-    },
     "info": {
         "description": "Barnlog backend HTTP API.",
         "title": "Barnlog Backend API",

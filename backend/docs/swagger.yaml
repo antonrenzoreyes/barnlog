@@ -34,9 +34,6 @@ components:
                     example: 248123
                     type: integer
             type: object
-externalDocs:
-    description: ""
-    url: ""
 info:
     description: Barnlog backend HTTP API.
     title: Barnlog Backend API

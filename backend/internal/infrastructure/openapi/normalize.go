@@ -1,3 +1,4 @@
+// Package openapi contains OpenAPI payload normalization helpers used by backend tooling.
 package openapi
 
 import "strings"
@@ -5,6 +6,7 @@ import "strings"
 // Normalize mutates an OpenAPI payload to match Barnlog contract needs.
 func Normalize(payload map[string]any) {
 	normalizeVersion(payload)
+	normalizeExternalDocs(payload)
 	normalizeUploadPhotoRequestBody(payload)
 }
 
@@ -57,4 +59,17 @@ func normalizeUploadPhotoRequestBody(payload map[string]any) {
 		},
 	}
 	delete(content, "application/x-www-form-urlencoded")
+}
+
+func normalizeExternalDocs(payload map[string]any) {
+	externalDocs, ok := payload["externalDocs"].(map[string]any)
+	if !ok {
+		return
+	}
+
+	urlValue, hasURL := externalDocs["url"]
+	url, isString := urlValue.(string)
+	if !hasURL || !isString || strings.TrimSpace(url) == "" {
+		delete(payload, "externalDocs")
+	}
 }
