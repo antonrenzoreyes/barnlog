@@ -6,6 +6,9 @@ backend/docs/swagger.yaml linguist-generated=true
 # SQLC generated code
 backend/internal/infrastructure/sqlite/sqlc/*.go linguist-generated=true
 
+# OpenAPI generated frontend types
+frontend/src/lib/api/generated/** linguist-generated=true
+
 # Prototype artifacts (generated-ish), except canonical docs and captured state outputs
 docs/prototype/** linguist-generated=true
 docs/prototype/docs/** linguist-generated=false
