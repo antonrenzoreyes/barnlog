@@ -17,7 +17,7 @@
 - Prefer strongly typed code; avoid `any` unless unavoidable and documented inline.
 - Prefer simple implementations over abstractions unless logic is reused 2+ times.
 - Keep components focused and move reusable logic to modules under `src/lib`.
-- Follow existing formatting/linting config (Biome + ESLint for Svelte rules).
+- Follow existing formatting/linting config (Oxc + ESLint for Svelte rules).
 
 ## Testing Requirements
 

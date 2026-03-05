@@ -1,13 +1,13 @@
-import { describe, expect, it } from 'vitest';
-import { page } from 'vitest/browser';
-import { render } from 'vitest-browser-svelte';
-import Page from './+page.svelte';
+import { describe, expect, it } from "vitest";
+import { page } from "vitest/browser";
+import { render } from "vitest-browser-svelte";
+import Page from "./+page.svelte";
 
-describe('/+page.svelte', () => {
-	it('should render h1', async () => {
-		render(Page);
+describe("/+page.svelte", () => {
+  it("should render h1", async () => {
+    render(Page);
 
-		const heading = page.getByRole('heading', { level: 1, name: 'Welcome to SvelteKit' });
-		await expect.element(heading).toBeInTheDocument();
-	});
+    const heading = page.getByRole("heading", { level: 1, name: "Welcome to SvelteKit" });
+    await expect.element(heading).toBeInTheDocument();
+  });
 });
