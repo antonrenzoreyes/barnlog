@@ -42,7 +42,9 @@ jobs:
       - name: Lint
         run: bun run lint
 
-      - name: Build
+      - name: Build (with Codecov bundle analysis)
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: bun run build
 
       - name: Unit tests

@@ -1,11 +1,22 @@
 import { sveltekit } from "@sveltejs/kit/vite";
+import { codecovSvelteKitPlugin } from "@codecov/sveltekit-plugin";
 import tailwindcss from "@tailwindcss/vite";
 import { playwright } from "@vitest/browser-playwright";
 import devtoolsJson from "vite-plugin-devtools-json";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [tailwindcss(), sveltekit(), devtoolsJson()],
+  plugins: [
+    tailwindcss(),
+    sveltekit(),
+    devtoolsJson(),
+    // Put the Codecov SvelteKit plugin after all other plugins.
+    codecovSvelteKitPlugin({
+      enableBundleAnalysis: true,
+      bundleName: "barnlog-frontend",
+      uploadToken: process.env.CODECOV_TOKEN,
+    }),
+  ],
   test: {
     expect: { requireAssertions: true },
     coverage: {
