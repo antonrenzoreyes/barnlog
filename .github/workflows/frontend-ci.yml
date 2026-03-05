@@ -45,5 +45,5 @@ jobs:
       - name: Build
         run: bun run build
 
-      - name: Unit tests (server)
-        run: bunx vitest --project server --run
+      - name: Unit tests
+        run: bunx vitest --project unit --run
