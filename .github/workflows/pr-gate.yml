@@ -1,0 +1,24 @@
+name: PR Gate
+
+on:
+  pull_request:
+    branches: [master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  required-gate:
+    name: Required Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Gate status
+        run: |
+          echo "Always-run gate for branch protection."
+          echo "Use this check as required to avoid path-filtered check deadlocks."
