@@ -1,0 +1,61 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": null,
+
+  // Keep strict category defaults and carve out only specific files via overrides.
+  "categories": {
+    "suspicious": "deny",
+    "perf": "deny",
+    "style": "deny",
+    "pedantic": "deny",
+    "restriction": "deny"
+  },
+
+  "rules": {},
+  "env": {
+    "builtin": true
+  },
+  "globals": {},
+  "ignorePatterns": [
+    "node_modules/**",
+    ".svelte-kit/**",
+    "build/**",
+    "dist/**",
+    "coverage/**",
+    "src/lib/api/generated/**",
+    "src/lib/index.ts"
+  ],
+  "overrides": [
+    {
+      // SvelteKit template typings intentionally use lowercase comments and `export {}`.
+      "files": ["src/app.d.ts"],
+      "rules": {
+        "eslint/capitalized-comments": "off",
+        "eslint-plugin-unicorn/require-module-specifiers": "off"
+      }
+    },
+    {
+      // Test code favors readability and async flows over strict style restrictions.
+      "files": ["src/**/*.spec.ts", "src/**/*.test.ts", "e2e/**/*.ts"],
+      "rules": {
+        "eslint/no-magic-numbers": "off",
+        "eslint/sort-imports": "off",
+        "oxc/no-async-await": "off"
+      }
+    },
+    {
+      // Tooling configs are order-sensitive in practice and commonly use spread syntax.
+      "files": [
+        "*.config.{js,ts,mjs,cjs}",
+        "eslint.config.js",
+        "vite.config.ts",
+        "playwright.config.ts"
+      ],
+      "rules": {
+        "eslint/sort-imports": "off",
+        "eslint/sort-keys": "off",
+        "oxc/no-rest-spread-properties": "off"
+      }
+    }
+  ]
+}
