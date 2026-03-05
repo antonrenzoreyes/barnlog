@@ -31,7 +31,7 @@
       "files": ["src/app.d.ts"],
       "rules": {
         "eslint/capitalized-comments": "off",
-        "eslint-plugin-unicorn/require-module-specifiers": "off"
+        "unicorn/require-module-specifiers": "off"
       }
     },
     {
