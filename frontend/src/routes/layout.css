@@ -1,3 +1,122 @@
-@import "tailwindcss";
-@plugin "@tailwindcss/forms";
-@plugin "@tailwindcss/typography";
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@theme {
+	--font-sans: 'Avenir Next', 'Segoe UI', 'Noto Sans', sans-serif;
+
+	--color-barn-bg: #f7f4ee;
+	--color-barn-surface: #fffdf9;
+	--color-barn-surface-muted: #f1ece2;
+	--color-barn-line: #d7cec0;
+	--color-barn-text: #2f2b24;
+	--color-barn-muted: #6b6358;
+	--color-barn-primary: #456148;
+	--color-barn-primary-pressed: #39503b;
+	--color-barn-danger: #8f3b2f;
+
+	--radius-barn-sm: 0.5rem;
+	--radius-barn-md: 0.625rem;
+	--radius-barn-lg: 0.875rem;
+
+	--shadow-barn-card: 0 1px 2px rgb(47 43 36 / 0.08), 0 6px 14px rgb(47 43 36 / 0.06);
+}
+
+@layer base {
+	html,
+	body {
+		@apply bg-barn-bg text-barn-text antialiased;
+	}
+}
+
+@layer components {
+	.app-shell {
+		@apply mx-auto min-h-screen w-full max-w-[430px] bg-barn-bg px-4 pb-[88px];
+	}
+
+	.app-card {
+		@apply rounded-barn-lg border border-barn-line bg-barn-surface shadow-barn-card;
+	}
+
+	.app-topbar {
+		@apply sticky top-0 z-30 border-b border-barn-line bg-barn-bg py-3;
+		margin-left: calc(50% - 50vw);
+		margin-right: calc(50% - 50vw);
+	}
+
+	.app-topbar > * {
+		@apply mx-auto w-full max-w-[430px] px-4;
+	}
+
+	.btn {
+		@apply inline-flex items-center justify-center rounded-barn-lg font-semibold transition-colors;
+	}
+
+	.btn-sm {
+		@apply min-h-9 px-3 text-sm;
+	}
+
+	.btn-md {
+		@apply min-h-11 px-4 text-[0.94rem];
+	}
+
+	.btn-primary {
+		@apply bg-barn-primary text-stone-100 hover:bg-barn-primary-pressed active:bg-barn-primary-pressed;
+	}
+
+	.btn-secondary {
+		@apply border border-barn-line bg-barn-surface text-barn-text hover:bg-barn-surface-muted;
+	}
+
+	.btn-danger {
+		@apply bg-barn-danger text-stone-100 hover:opacity-90 active:opacity-90;
+	}
+
+	.btn-ghost {
+		@apply bg-transparent text-barn-text hover:bg-barn-surface-muted active:bg-barn-surface-muted;
+	}
+
+	.btn-disabled {
+		@apply cursor-not-allowed opacity-50;
+	}
+
+	.icon-inline {
+		@apply h-4 w-4;
+	}
+
+	.icon-button {
+		@apply h-[18px] w-[18px];
+	}
+
+	.icon-fab {
+		@apply h-5 w-5;
+	}
+
+	.icon-display {
+		@apply h-6 w-6;
+	}
+
+	.field {
+		@apply grid gap-2;
+	}
+
+	.label {
+		@apply text-sm font-semibold text-stone-700;
+	}
+
+	.input-base {
+		@apply min-h-12 w-full rounded-barn-md border-barn-line bg-barn-surface px-3 text-base text-barn-text;
+	}
+
+	.chip {
+		@apply inline-flex min-h-10 items-center rounded-full border border-barn-line bg-barn-surface px-4 text-[0.95rem] text-barn-muted;
+	}
+
+	.chip-active {
+		@apply border-[#6e8162] bg-[#e9f0e7] text-[#2f4a32];
+	}
+
+	.species-badge {
+		@apply inline-flex items-center rounded-full border border-barn-line bg-barn-surface-muted px-2.5 py-1 text-xs font-semibold text-barn-muted;
+	}
+}
