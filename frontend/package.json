@@ -10,7 +10,7 @@
     "prepare": "svelte-kit sync || echo ''",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "lint:oxc": "oxfmt --check . && oxlint .",
+    "lint:oxc": "oxlint . && oxfmt --check .",
     "lint:svelte": "eslint .",
     "lint": "bun run lint:oxc && bun run lint:svelte",
     "format": "oxfmt .",

@@ -35,6 +35,13 @@
       }
     },
     {
+      // Svelte files often mix style/module/runtime imports in framework-specific order.
+      "files": ["src/**/*.svelte"],
+      "rules": {
+        "eslint/sort-imports": "off"
+      }
+    },
+    {
       // Test code favors readability and async flows over strict style restrictions.
       "files": ["src/**/*.spec.ts", "src/**/*.test.ts", "e2e/**/*.ts"],
       "rules": {
