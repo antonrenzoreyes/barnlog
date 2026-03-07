@@ -42,6 +42,13 @@
       }
     },
     {
+      // Component root prop forwarding uses object rest with typed props.
+      "files": ["src/lib/ui/components/*.svelte"],
+      "rules": {
+        "oxc/no-rest-spread-properties": "off"
+      }
+    },
+    {
       // Test code favors readability and async flows over strict style restrictions.
       "files": ["src/**/*.spec.ts", "src/**/*.test.ts", "e2e/**/*.ts"],
       "rules": {
