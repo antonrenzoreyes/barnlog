@@ -3,7 +3,9 @@ set -euo pipefail
 
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MANIFEST="${SKILL_DIR}/references/skills-manifest.txt"
-INSTALLER="/Users/areyes/.codex/skills/.system/skill-installer/scripts/install-skill-from-github.py"
+CODEX_HOME="${CODEX_HOME:-${HOME}/.codex}"
+TARGET_SKILLS_DIR="${CODEX_SKILLS_DIR:-${CODEX_HOME}/skills}"
+INSTALLER="${SKILL_INSTALLER_PATH:-${CODEX_HOME}/skills/.system/skill-installer/scripts/install-skill-from-github.py}"
 
 if [[ ! -f "${MANIFEST}" ]]; then
   echo "Manifest not found: ${MANIFEST}" >&2
@@ -28,12 +30,40 @@ while IFS= read -r line; do
   fi
 
   skill_name="$(basename "${skill_path}")"
-  rm -rf "/Users/areyes/.codex/skills/${skill_name}"
+  target_dir="${TARGET_SKILLS_DIR}/${skill_name}"
+  temp_root="$(mktemp -d "${TMPDIR:-/tmp}/skills-updater.${skill_name}.XXXXXX")"
+  backup_dir=""
 
   python3 "${INSTALLER}" \
     --repo "${repo}" \
     --path "${skill_path}" \
-    --method git
+    --method git \
+    --dest "${temp_root}"
+
+  if [[ ! -d "${temp_root}/${skill_name}" ]]; then
+    echo "Installed skill not found in temp dir: ${temp_root}/${skill_name}" >&2
+    rm -rf "${temp_root}"
+    exit 1
+  fi
+
+  if [[ -e "${target_dir}" ]]; then
+    backup_dir="${target_dir}.bak.$(date +%s)"
+    mv "${target_dir}" "${backup_dir}"
+  fi
+
+  if mv "${temp_root}/${skill_name}" "${target_dir}"; then
+    rm -rf "${temp_root}"
+    if [[ -n "${backup_dir}" && -e "${backup_dir}" ]]; then
+      rm -rf "${backup_dir}"
+    fi
+  else
+    rm -rf "${temp_root}"
+    if [[ -n "${backup_dir}" && -e "${backup_dir}" ]]; then
+      mv "${backup_dir}" "${target_dir}"
+    fi
+    echo "Failed to replace ${target_dir}" >&2
+    exit 1
+  fi
 
 done < "${MANIFEST}"
 

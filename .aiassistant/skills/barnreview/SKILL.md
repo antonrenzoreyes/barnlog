@@ -8,7 +8,7 @@ description: Review local changes in the Barn Log workspace for bugs, regression
 ## Review Workflow
 
 1. Load repo instructions:
-- Read `AGENTS.md`.
+- Read the root `AGENTS.md` and any nearest applicable nested `AGENTS.md` files for changed paths.
 - For frontend Svelte changes (`frontend/**/*.svelte`, `frontend/**/*.svelte.ts`, `frontend/**/*.svelte.js`), load and apply `svelte-core-bestpractices`.
 
 2. Identify review target and changed files:
@@ -47,6 +47,8 @@ description: Review local changes in the Barn Log workspace for bugs, regression
 5. Overall change map (Mermaid sequence diagram):
 - Diagram the entire changeset, not an individual patch hunk or single comment.
 - Use Mermaid `sequenceDiagram` as the default format.
+- If the changeset has no runtime interaction changes (for example docs/config/tooling-only updates), use this exact fallback line instead of a diagram:
+- `No runtime interaction changes in scope`
 - Include all applicable runtime changes from the review scope.
 - Keep it readable:
 - Max 6 participants.

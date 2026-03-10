@@ -17,10 +17,10 @@ Use this skill to refresh a tracked set of skills from GitHub.
 ## Update Workflow
 
 1. Review the manifest before updating:
-- `cat references/skills-manifest.txt`
+- `cat .aiassistant/skills/skills-updater/references/skills-manifest.txt`
 
 2. Run the updater script:
-- `scripts/update_skills.sh`
+- `.aiassistant/skills/skills-updater/scripts/update_skills.sh`
 
 3. Report what was updated:
 - List skill names updated.
