@@ -1,3 +1,0 @@
-# One skill per line: <repo> <path-inside-repo>
-sveltejs/ai-tools tools/skills/svelte-code-writer
-sveltejs/ai-tools tools/skills/svelte-core-bestpractices
