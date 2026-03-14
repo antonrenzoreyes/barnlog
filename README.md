@@ -38,7 +38,7 @@ Planning artifacts are managed with the custom `barnboard` skill.
 ## Prerequisites
 
 - Go 1.26+
-- Bun (for frontend install, dev, lint, build, and tests)
+- pnpm + Vite+ (`vp`) for frontend install, dev, lint, build, and tests
 - `migrate` CLI (`golang-migrate`) for manual migration commands and schema snapshot generation
 - `sqlite3` CLI for schema snapshot generation
 
@@ -52,8 +52,8 @@ Frontend app:
 
 ```bash
 cd frontend
-bun install
-bun run dev
+pnpm install
+vp dev
 ```
 
 ## Backend Runtime

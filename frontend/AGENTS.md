@@ -8,8 +8,8 @@
 
 - Framework: SvelteKit 2 with Svelte 5.
 - Language: TypeScript for app and tests.
-- Build tooling: Vite.
-- Package manager/runtime: Bun (use `bun run <script>` for project scripts).
+- Build tooling: Vite+.
+- Package manager/runtime: pnpm + Vite+ (`vp` for scripts/tasks).
 
 ## Implementation Rules
 
@@ -57,7 +57,7 @@
 
 ## CI Gates
 
-- Before merge, run `bun run check`, `bun run lint`, and all tests (`bun run test`).
+- Before merge, run `vp run check`, `vp run lint`, and all tests (`vp run test`).
 
 ## Test Locations
 
@@ -69,14 +69,14 @@
 
 ## Standard Commands
 
-- Dev server: `bun run dev`
-- Type and Svelte checks: `bun run check`
-- Lint: `bun run lint`
-- Generate OpenAPI types: `bun run gen:api-types`
-- Verify OpenAPI generated types are up to date: `bun run check:api-types`
-- Unit tests: `bun run test:unit -- --run`
-- E2E tests: `bun run test:e2e`
-- Full test pass: `bun run test`
+- Dev server: `vp dev`
+- Type and Svelte checks: `vp run check`
+- Lint: `vp run lint`
+- Generate OpenAPI types: `vp run gen:api-types`
+- Verify OpenAPI generated types are up to date: `vp run check:api-types`
+- Unit tests: `vp run test:unit -- --run`
+- E2E tests: `vp run test:e2e`
+- Full test pass: `vp run test`
 
 ## Done Criteria
 
