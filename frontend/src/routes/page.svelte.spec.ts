@@ -4,10 +4,10 @@ import { render } from "vitest-browser-svelte";
 import Page from "./+page.svelte";
 
 describe("/+page.svelte", () => {
-  it("should render h1", async () => {
+  it("should render h1", () => {
     render(Page);
 
     const heading = page.getByRole("heading", { level: 1, name: "Welcome to SvelteKit" });
-    await expect.element(heading).toBeInTheDocument();
+    expect(heading).toBeInTheDocument();
   });
 });
