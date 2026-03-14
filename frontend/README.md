@@ -23,10 +23,10 @@ pnpm dlx sv@0.12.4 create --template minimal --types ts --add prettier eslint vi
 Once you've created a project and installed dependencies with `pnpm install`, start a development server:
 
 ```sh
-vp dev
+pnpm run dev
 
 # or start the server and open the app in a new browser tab
-vp dev --open
+pnpm run dev -- --open
 ```
 
 ## Building
@@ -34,9 +34,9 @@ vp dev --open
 To create a production version of your app:
 
 ```sh
-vp build
+pnpm run build
 ```
 
-You can preview the production build with `vp preview`.
+You can preview the production build with `pnpm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

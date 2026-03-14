@@ -7,7 +7,7 @@ Current repository status is bootstrap-stage: a minimal Go app exists, with proj
 ## Tech Stack
 
 - Backend: Go 1.26.x, `net/http` + `chi`, SQLite, `sqlc`, `slog`
-- Frontend: Bun, SvelteKit 2 (Svelte 5) + TypeScript, Vite 7, Tailwind CSS 4, IndexedDB (Dexie)
+- Frontend: pnpm + Vite+ (`vp`), SvelteKit 2 (Svelte 5) + TypeScript, Tailwind CSS 4, IndexedDB (Dexie)
 - Frontend testing: Vitest (unit/component) + Playwright (e2e)
 - Architecture: pragmatic event-driven model (append-only events first, projections added as needed)
 
@@ -53,7 +53,7 @@ Frontend app:
 ```bash
 cd frontend
 pnpm install
-vp dev
+pnpm run dev
 ```
 
 ## Backend Runtime
