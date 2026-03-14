@@ -31,25 +31,29 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@ecf28ddc73e819eb6fa29df6b34ef8921c743461
+      - name: Setup Vite+
+        uses: voidzero-dev/setup-vp@v1
+        with:
+          node-version: "22"
+          cache: true
+          run-install: false
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: vp install --frozen-lockfile
 
       - name: Verify generated API types
-        run: bun run check:api-types
+        run: vp run check:api-types
 
-      - name: Type check
-        run: bun run check
+      - name: Vite+ check
+        run: vp check
 
-      - name: Lint
-        run: bun run lint
+      - name: Svelte Lint
+        run: vp run lint:svelte
 
       - name: Build (with Codecov bundle analysis)
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: bun run build
+        run: vp run build
 
       - name: Unit tests
-        run: bunx vitest --project unit --run
+        run: vp test --project unit --run

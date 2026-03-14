@@ -1,9 +1,9 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import { codecovSvelteKitPlugin } from "@codecov/sveltekit-plugin";
 import tailwindcss from "@tailwindcss/vite";
-import { playwright } from "@vitest/browser-playwright";
+import { playwright } from "vite-plus/test/browser-playwright";
 import devtoolsJson from "vite-plugin-devtools-json";
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "vite-plus";
 
 export default defineConfig({
   plugins: [
@@ -17,6 +17,80 @@ export default defineConfig({
       uploadToken: process.env.CODECOV_TOKEN,
     }),
   ],
+  fmt: {
+    ignorePatterns: [
+      "node_modules/**",
+      ".svelte-kit/**",
+      "build/**",
+      "dist/**",
+      "coverage/**",
+      "src/lib/api/generated/**",
+    ],
+  },
+  lint: {
+    categories: {
+      suspicious: "deny",
+      perf: "deny",
+      style: "deny",
+      pedantic: "deny",
+    },
+    rules: {},
+    env: {
+      builtin: true,
+    },
+    globals: {},
+    ignorePatterns: [
+      "node_modules/**",
+      ".svelte-kit/**",
+      "build/**",
+      "dist/**",
+      "coverage/**",
+      "src/lib/api/generated/**",
+      "src/lib/index.ts",
+    ],
+    overrides: [
+      {
+        files: ["src/app.d.ts"],
+        rules: {
+          "eslint/capitalized-comments": "off",
+          "unicorn/require-module-specifiers": "off",
+        },
+      },
+      {
+        files: ["src/**/*.svelte"],
+        rules: {
+          "eslint/sort-imports": "off",
+        },
+      },
+      {
+        files: ["src/lib/ui/components/*.svelte"],
+        rules: {
+          "oxc/no-rest-spread-properties": "off",
+        },
+      },
+      {
+        files: ["src/**/*.spec.ts", "src/**/*.test.ts", "e2e/**/*.ts"],
+        rules: {
+          "eslint/no-magic-numbers": "off",
+          "eslint/sort-imports": "off",
+          "oxc/no-async-await": "off",
+        },
+      },
+      {
+        files: [
+          "*.config.{js,ts,mjs,cjs}",
+          "eslint.config.js",
+          "vite.config.ts",
+          "playwright.config.ts",
+        ],
+        rules: {
+          "eslint/sort-imports": "off",
+          "eslint/sort-keys": "off",
+          "oxc/no-rest-spread-properties": "off",
+        },
+      },
+    ],
+  },
   test: {
     expect: { requireAssertions: true },
     coverage: {
