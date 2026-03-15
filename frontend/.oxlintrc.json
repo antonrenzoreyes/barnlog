@@ -7,8 +7,7 @@
     "suspicious": "deny",
     "perf": "deny",
     "style": "deny",
-    "pedantic": "deny",
-    "restriction": "deny"
+    "pedantic": "deny"
   },
 
   "rules": {},
