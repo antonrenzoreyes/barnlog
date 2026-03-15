@@ -6,3 +6,6 @@ backend/db/*.sqlite*
 
 # macOS
 .DS_Store
+
+# playwright
+.playwright-cli/

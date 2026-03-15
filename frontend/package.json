@@ -21,6 +21,15 @@
     "test": "bun run test:unit -- --run && bun run test:e2e",
     "test:e2e": "playwright test"
   },
+  "dependencies": {
+    "@internationalized/date": "^3.12.0",
+    "@uppy/core": "^5.2.0",
+    "@uppy/dashboard": "^5.1.1",
+    "@uppy/svelte": "^5.2.0",
+    "@uppy/xhr-upload": "^5.1.1",
+    "bits-ui": "^2.16.3",
+    "lucide-svelte": "^0.577.0"
+  },
   "devDependencies": {
     "@codecov/sveltekit-plugin": "^1.9.1",
     "@eslint/compat": "^2.0.2",

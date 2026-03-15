@@ -31,6 +31,15 @@
 - For Svelte or SvelteKit documentation and framework-specific guidance, use the `svelte` MCP server.
 - For browser automation, UI flow checks, screenshots, and Playwright-driven E2E work, use `playwright-cli`.
 
+## Skill Workflow
+
+- For UI vibe/design quality checks, use the following skills:
+  1. `$critique`
+- For implementation, use the following skills:
+  1. `$frontend-design`
+  2. `$svelte-code-writer`
+  3. `$svelte-core-bestpractices`
+
 ## Architecture
 
 - Frontend is CSR-only.
