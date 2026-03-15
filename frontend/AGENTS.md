@@ -57,7 +57,11 @@
 
 ## CI Gates
 
-- Before merge, run `vp check`, `vp run lint:svelte`, and all tests (`vp run test`).
+- Before merge, run:
+  - `vp check` (Oxc format/lint + TypeScript checks)
+  - `vp run check` (`svelte-kit sync` + `svelte-check`)
+  - `vp run lint:svelte` (ESLint + Prettier Svelte checks)
+  - `vp run test` (unit + browser + e2e via configured scripts)
 
 ## Test Locations
 

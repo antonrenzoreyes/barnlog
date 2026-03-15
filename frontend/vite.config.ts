@@ -32,6 +32,7 @@ export default defineConfig({
       suspicious: "deny",
       perf: "deny",
       style: "deny",
+      // Intentional strict default; targeted exceptions are handled in overrides below.
       pedantic: "deny",
     },
     rules: {},
