@@ -47,6 +47,9 @@ jobs:
       - name: Vite+ check
         run: vp check
 
+      - name: Svelte type check
+        run: vp run check
+
       - name: Svelte Lint
         run: vp run lint:svelte
 
