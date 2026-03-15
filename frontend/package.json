@@ -18,7 +18,8 @@
     "gen:api-types": "openapi-typescript ../backend/docs/swagger.yaml -o src/lib/api/generated/types.ts",
     "check:api-types": "vp run gen:api-types && git diff --exit-code -- src/lib/api/generated/types.ts",
     "test:unit": "vp test --project unit --run",
-    "test": "vp run test:unit && vp run test:e2e",
+    "test:client": "vp test --project client --run",
+    "test": "vp run test:unit && vp run test:client && vp run test:e2e",
     "test:e2e": "playwright test"
   },
   "devDependencies": {
