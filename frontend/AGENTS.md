@@ -157,5 +157,5 @@ These commands map to their corresponding tools. For example, `vp dev --port 300
 ## Review Checklist for Agents
 
 - [ ] Run `vp install` after pulling remote changes and before getting started.
-- [ ] Run `vp check` and `vp test` to validate changes.
+- [ ] Run `vp check`, `vp run check`, `vp run lint:svelte`, and `vp run test` to validate changes.
 <!--VITE PLUS END-->
