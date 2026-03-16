@@ -86,22 +86,52 @@
   <DatePicker.Trigger
     aria-describedby={ariaDescribedBy}
     aria-invalid={ariaInvalid}
-    class="group flex h-14 w-full items-center justify-between gap-3 rounded-xl border border-(--ui-color-border) bg-(--ui-color-surface) px-3.5 text-left text-base font-medium shadow-[var(--ui-shadow-input)] outline-none transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-(--ui-color-border-strong) hover:bg-[color:color-mix(in_oklab,var(--ui-color-surface)_90%,var(--ui-color-panel))] focus:border-(--ui-color-primary) focus:ring-0 focus:shadow-[var(--ui-shadow-focus)] aria-invalid:border-(--ui-color-border-danger) aria-invalid:focus:border-(--ui-color-border-danger) aria-invalid:focus:shadow-[var(--ui-shadow-focus-danger)] disabled:cursor-not-allowed disabled:border-(--ui-color-border) disabled:bg-[color:color-mix(in_oklab,var(--ui-color-surface)_40%,var(--ui-color-panel))] disabled:text-(--ui-color-text-soft)"
+    class="
+      group flex h-14 w-full items-center justify-between gap-3 rounded-xl
+      border border-(--ui-color-border) bg-(--ui-color-surface) px-3.5 text-left
+      text-base font-medium shadow-(--ui-shadow-input)
+      transition-[border-color,box-shadow,background-color] duration-200
+      ease-out outline-none
+      hover:border-(--ui-color-border-strong)
+      hover:bg-[color-mix(in_oklab,var(--ui-color-surface)_90%,var(--ui-color-panel))]
+      focus:border-(--ui-color-primary) focus:shadow-(--ui-shadow-focus)
+      focus:ring-0
+      disabled:cursor-not-allowed disabled:border-(--ui-color-border)
+      disabled:bg-[color-mix(in_oklab,var(--ui-color-surface)_40%,var(--ui-color-panel))]
+      disabled:text-(--ui-color-text-soft)
+      aria-invalid:border-(--ui-color-border-danger)
+      aria-invalid:focus:border-(--ui-color-border-danger)
+      aria-invalid:focus:shadow-(--ui-shadow-focus-danger)
+    "
     {id}
   >
     <span class="flex min-w-0 items-center gap-2.5">
       <span
         aria-hidden="true"
-        class="grid h-8 w-8 shrink-0 place-items-center rounded-lg border border-(--ui-color-border) bg-(--ui-color-panel) text-(--ui-color-primary-strong) transition group-hover:border-(--ui-color-border-strong)"
+        class="
+          grid size-8 shrink-0 place-items-center rounded-lg border
+          border-(--ui-color-border) bg-(--ui-color-panel)
+          text-(--ui-color-primary-strong) transition
+          group-hover:border-(--ui-color-border-strong)
+        "
       >
         <CalendarDays size={15} strokeWidth={2.25} />
       </span>
-      <span class={`truncate ${displayTextClass}`}>{displayText}</span>
+      <span
+        class={`
+          truncate
+          ${displayTextClass}
+        `}>{displayText}</span
+      >
     </span>
 
     <span
       aria-hidden="true"
-      class="grid h-7 w-7 shrink-0 place-items-center text-(--ui-color-text-soft) transition-transform duration-200 ease-out group-data-[state=open]:rotate-180"
+      class="
+        grid size-7 shrink-0 place-items-center text-(--ui-color-text-soft)
+        transition-transform duration-200 ease-out
+        group-data-[state=open]:rotate-180
+      "
     >
       <ChevronDown size={15} strokeWidth={2.3} />
     </span>
@@ -120,7 +150,11 @@
 
   <DatePicker.Portal>
     <DatePicker.Content
-      class="z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-(--ui-color-border) bg-(--ui-color-surface) p-0 shadow-[var(--ui-shadow-card)]"
+      class="
+        z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border
+        border-(--ui-color-border) bg-(--ui-color-surface) p-0
+        shadow-(--ui-shadow-card)
+      "
       sideOffset={8}
     >
       <DatePicker.Calendar class="space-y-2 p-3">
@@ -131,7 +165,15 @@
                 class="mb-1.5 flex items-center justify-between gap-2"
               >
                 <DatePicker.PrevButton
-                  class="grid h-8 w-8 place-items-center rounded-lg border border-(--ui-color-border) text-(--ui-color-text) transition duration-150 hover:border-(--ui-color-border-strong) hover:bg-(--ui-color-panel) focus:shadow-[var(--ui-shadow-focus)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-40"
+                  class="
+                    grid size-8 place-items-center rounded-lg border
+                    border-(--ui-color-border) text-(--ui-color-text) transition
+                    duration-150
+                    hover:border-(--ui-color-border-strong)
+                    hover:bg-(--ui-color-panel)
+                    focus:shadow-(--ui-shadow-focus)
+                    data-disabled:cursor-not-allowed data-disabled:opacity-40
+                  "
                 >
                   <ChevronLeft size={16} strokeWidth={2.25} />
                 </DatePicker.PrevButton>
@@ -139,17 +181,37 @@
                 <div class="flex min-w-0 items-center gap-1.5">
                   <DatePicker.MonthSelect
                     aria-label="Month"
-                    class="h-9 w-20 rounded-md border border-(--ui-color-border) bg-(--ui-color-surface) py-1 pl-2 pr-7 text-sm font-medium text-(--ui-color-text) outline-none transition hover:border-(--ui-color-border-strong) focus:shadow-[var(--ui-shadow-focus)]"
+                    class="
+                      h-9 w-20 rounded-md border border-(--ui-color-border)
+                      bg-(--ui-color-surface) py-1 pr-7 pl-2 text-sm font-medium
+                      text-(--ui-color-text) transition outline-none
+                      hover:border-(--ui-color-border-strong)
+                      focus:shadow-(--ui-shadow-focus)
+                    "
                     monthFormat="short"
                   />
                   <DatePicker.YearSelect
                     aria-label="Year"
-                    class="h-9 w-[4.75rem] rounded-md border border-(--ui-color-border) bg-(--ui-color-surface) py-1 pl-2 pr-7 text-sm font-medium text-(--ui-color-text) outline-none transition hover:border-(--ui-color-border-strong) focus:shadow-[var(--ui-shadow-focus)]"
+                    class="
+                      h-9 w-19 rounded-md border border-(--ui-color-border)
+                      bg-(--ui-color-surface) py-1 pr-7 pl-2 text-sm font-medium
+                      text-(--ui-color-text) transition outline-none
+                      hover:border-(--ui-color-border-strong)
+                      focus:shadow-(--ui-shadow-focus)
+                    "
                   />
                 </div>
 
                 <DatePicker.NextButton
-                  class="grid h-8 w-8 place-items-center rounded-lg border border-(--ui-color-border) text-(--ui-color-text) transition duration-150 hover:border-(--ui-color-border-strong) hover:bg-(--ui-color-panel) focus:shadow-[var(--ui-shadow-focus)] data-[disabled]:cursor-not-allowed data-[disabled]:opacity-40"
+                  class="
+                    grid size-8 place-items-center rounded-lg border
+                    border-(--ui-color-border) text-(--ui-color-text) transition
+                    duration-150
+                    hover:border-(--ui-color-border-strong)
+                    hover:bg-(--ui-color-panel)
+                    focus:shadow-(--ui-shadow-focus)
+                    data-disabled:cursor-not-allowed data-disabled:opacity-40
+                  "
                 >
                   <ChevronRight size={16} strokeWidth={2.25} />
                 </DatePicker.NextButton>
@@ -159,7 +221,10 @@
                 <DatePicker.GridRow class="grid grid-cols-7 gap-1">
                   {#each weekdays as weekday, weekdayIndex (`${weekday}-${weekdayIndex}`)}
                     <DatePicker.HeadCell
-                      class="grid h-7 place-items-center text-xs font-semibold uppercase tracking-[0.05em] text-(--ui-color-text-soft)"
+                      class="
+                        grid h-7 place-items-center text-xs font-semibold
+                        tracking-[0.05em] text-(--ui-color-text-soft) uppercase
+                      "
                     >
                       {weekday}
                     </DatePicker.HeadCell>
@@ -173,7 +238,33 @@
                     {#each week as date (date.toString())}
                       <DatePicker.Cell {date} month={month.value}>
                         <DatePicker.Day
-                          class="relative grid h-9 w-full place-items-center rounded-lg border border-transparent text-sm font-semibold text-(--ui-color-text) outline-none transition-[background-color,color,border-color,box-shadow] duration-150 hover:border-(--ui-color-border) hover:bg-(--ui-color-panel) data-[outside-month]:text-(--ui-color-text-soft) data-[today]:border-(--ui-color-primary) data-[today]:ring-1 data-[today]:ring-(--ui-color-primary) data-[today]:after:absolute data-[today]:after:bottom-1 data-[today]:after:h-1 data-[today]:after:w-1 data-[today]:after:rounded-full data-[today]:after:bg-current data-[selected]:border-(--ui-color-primary-strong) data-[selected]:bg-(--ui-color-primary) data-[selected]:text-white data-[selected]:shadow-[0_6px_14px_color-mix(in_oklab,var(--ui-color-primary)_38%,transparent)] data-[selected]:after:hidden data-[disabled]:cursor-not-allowed data-[disabled]:opacity-35 data-[disabled]:hover:border-transparent data-[disabled]:hover:bg-transparent focus-visible:shadow-[var(--ui-shadow-focus)]"
+                          class="
+                            relative grid h-9 w-full place-items-center
+                            rounded-lg border border-transparent text-sm
+                            font-semibold text-(--ui-color-text)
+                            transition-[background-color,color,border-color,box-shadow]
+                            duration-150 outline-none
+                            hover:border-(--ui-color-border)
+                            hover:bg-(--ui-color-panel)
+                            focus-visible:shadow-(--ui-shadow-focus)
+                            data-disabled:cursor-not-allowed
+                            data-disabled:opacity-35
+                            data-disabled:hover:border-transparent
+                            data-disabled:hover:bg-transparent
+                            data-outside-month:text-(--ui-color-text-soft)
+                            data-selected:border-(--ui-color-primary-strong)
+                            data-selected:bg-(--ui-color-primary)
+                            data-selected:text-white
+                            data-selected:shadow-[0_6px_14px_color-mix(in_oklab,var(--ui-color-primary)_38%,transparent)]
+                            data-selected:after:hidden
+                            data-today:border-(--ui-color-primary)
+                            data-today:ring-1
+                            data-today:ring-(--ui-color-primary)
+                            data-today:after:absolute data-today:after:bottom-1
+                            data-today:after:size-1
+                            data-today:after:rounded-full
+                            data-today:after:bg-current
+                          "
                         />
                       </DatePicker.Cell>
                     {/each}
@@ -189,7 +280,13 @@
         class="flex items-center gap-2 border-t border-(--ui-color-border) p-2"
       >
         <button
-          class="h-9 flex-1 rounded-lg border border-(--ui-color-primary-strong) bg-(--ui-color-primary) px-3 text-sm font-semibold text-white transition hover:bg-(--ui-color-primary-strong) focus:shadow-[var(--ui-shadow-focus)]"
+          class="
+            h-9 flex-1 rounded-lg border border-(--ui-color-primary-strong)
+            bg-(--ui-color-primary) px-3 text-sm font-semibold text-white
+            transition
+            hover:bg-(--ui-color-primary-strong)
+            focus:shadow-(--ui-shadow-focus)
+          "
           onclick={setToday}
           type="button"
         >
@@ -197,7 +294,14 @@
         </button>
 
         <button
-          class="h-9 flex-1 rounded-lg border border-transparent bg-transparent px-3 text-sm font-medium text-(--ui-color-text-soft) transition hover:bg-(--ui-color-panel) hover:text-(--ui-color-text) focus:shadow-[var(--ui-shadow-focus)] disabled:cursor-not-allowed disabled:text-(--ui-color-text-soft) disabled:opacity-45"
+          class="
+            h-9 flex-1 rounded-lg border border-transparent bg-transparent px-3
+            text-sm font-medium text-(--ui-color-text-soft) transition
+            hover:bg-(--ui-color-panel) hover:text-(--ui-color-text)
+            focus:shadow-(--ui-shadow-focus)
+            disabled:cursor-not-allowed disabled:text-(--ui-color-text-soft)
+            disabled:opacity-45
+          "
           disabled={!value}
           onclick={clearDate}
           type="button"

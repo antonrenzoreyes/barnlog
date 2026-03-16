@@ -18,7 +18,7 @@
   this={props.as ?? "div"}
   aria-label={props["aria-label"]}
   class={[
-    "rounded-3xl border border-(--ui-color-border) shadow-[var(--ui-shadow-card)]",
+    `rounded-3xl border border-(--ui-color-border) shadow-(--ui-shadow-card)`,
     (!props.tone || props.tone === "surface") && "bg-(--ui-color-surface)",
     props.tone === "panel" && "bg-(--ui-color-panel)",
     (!props.padding || props.padding === "md") && "p-4",

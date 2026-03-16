@@ -55,7 +55,26 @@
   <Select.Trigger
     aria-describedby={ariaDescribedBy}
     aria-invalid={ariaInvalid}
-    class="group flex h-14 w-full items-center justify-between gap-3 rounded-xl border border-(--ui-color-border) bg-(--ui-color-surface) px-3.5 text-left text-base font-medium shadow-[var(--ui-shadow-input)] outline-none transition-[border-color,box-shadow,background-color] duration-200 ease-out hover:border-(--ui-color-border-strong) hover:bg-[color:color-mix(in_oklab,var(--ui-color-surface)_90%,var(--ui-color-panel))] focus:border-(--ui-color-primary) focus:ring-0 focus:shadow-[var(--ui-shadow-focus)] data-[state=open]:border-(--ui-color-primary) data-[state=open]:bg-(--ui-color-panel) data-[state=open]:shadow-[var(--ui-shadow-focus)] aria-invalid:border-(--ui-color-border-danger) aria-invalid:focus:border-(--ui-color-border-danger) aria-invalid:focus:shadow-[var(--ui-shadow-focus-danger)] disabled:cursor-not-allowed disabled:border-(--ui-color-border) disabled:bg-[color:color-mix(in_oklab,var(--ui-color-surface)_40%,var(--ui-color-panel))] disabled:text-(--ui-color-text-soft)"
+    class="
+      group flex h-14 w-full items-center justify-between gap-3 rounded-xl
+      border border-(--ui-color-border) bg-(--ui-color-surface) px-3.5 text-left
+      text-base font-medium shadow-(--ui-shadow-input)
+      transition-[border-color,box-shadow,background-color] duration-200
+      ease-out outline-none
+      hover:border-(--ui-color-border-strong)
+      hover:bg-[color-mix(in_oklab,var(--ui-color-surface)_90%,var(--ui-color-panel))]
+      focus:border-(--ui-color-primary) focus:shadow-(--ui-shadow-focus)
+      focus:ring-0
+      disabled:cursor-not-allowed disabled:border-(--ui-color-border)
+      disabled:bg-[color-mix(in_oklab,var(--ui-color-surface)_40%,var(--ui-color-panel))]
+      disabled:text-(--ui-color-text-soft)
+      aria-invalid:border-(--ui-color-border-danger)
+      aria-invalid:focus:border-(--ui-color-border-danger)
+      aria-invalid:focus:shadow-(--ui-shadow-focus-danger)
+      data-[state=open]:border-(--ui-color-primary)
+      data-[state=open]:bg-(--ui-color-panel)
+      data-[state=open]:shadow-(--ui-shadow-focus)
+    "
     {id}
   >
     <span
@@ -71,7 +90,11 @@
 
     <span
       aria-hidden="true"
-      class="grid h-7 w-7 shrink-0 place-items-center text-(--ui-color-text-soft) transition-transform duration-200 ease-out group-data-[state=open]:rotate-180"
+      class="
+        grid size-7 shrink-0 place-items-center text-(--ui-color-text-soft)
+        transition-transform duration-200 ease-out
+        group-data-[state=open]:rotate-180
+      "
     >
       <ChevronDown size={15} strokeWidth={2.3} />
     </span>
@@ -79,13 +102,20 @@
 
   <Select.Portal>
     <Select.Content
-      class="z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border border-(--ui-color-border) bg-(--ui-color-surface) p-1.5 shadow-[var(--ui-shadow-card)]"
+      class="
+        z-50 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-2xl border
+        border-(--ui-color-border) bg-(--ui-color-surface) p-1.5
+        shadow-(--ui-shadow-card)
+      "
       sideOffset={8}
     >
       <Select.Viewport class="max-h-72 space-y-1 overflow-y-auto p-0.5">
         {#if options.length === 0}
           <div
-            class="flex min-h-11 items-center rounded-lg px-3 text-sm text-(--ui-color-text-soft)"
+            class="
+              flex min-h-11 items-center rounded-lg px-3 text-sm
+              text-(--ui-color-text-soft)
+            "
           >
             No options available
           </div>
@@ -99,10 +129,16 @@
               {#snippet children({ highlighted, selected })}
                 <div
                   class={[
-                    "flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 py-2 text-sm font-medium transition",
+                    `
+                      flex min-h-11 items-center justify-between gap-3
+                      rounded-lg px-3 py-2 text-sm font-medium transition
+                    `,
                     highlighted && "bg-(--ui-color-panel)",
                     selected &&
-                      "bg-(--ui-color-primary-soft) text-(--ui-color-primary-strong)",
+                      `
+                        bg-(--ui-color-primary-soft)
+                        text-(--ui-color-primary-strong)
+                      `,
                     option.disabled && "text-(--ui-color-text-soft)",
                   ]}
                 >
@@ -112,7 +148,9 @@
                     </span>
                     {#if option.description}
                       <span
-                        class="block text-xs font-normal text-(--ui-color-text-soft)"
+                        class="
+                          block text-xs font-normal text-(--ui-color-text-soft)
+                        "
                       >
                         {option.description}
                       </span>
@@ -121,7 +159,10 @@
 
                   <span
                     class={[
-                      "grid h-5 w-5 shrink-0 place-items-center text-(--ui-color-primary-strong) transition-opacity",
+                      `
+                        grid size-5 shrink-0 place-items-center
+                        text-(--ui-color-primary-strong) transition-opacity
+                      `,
                       selected ? "opacity-100" : "opacity-0",
                     ]}
                   >

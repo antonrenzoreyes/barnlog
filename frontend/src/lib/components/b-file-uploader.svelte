@@ -177,10 +177,26 @@
 <button
   aria-describedby={props["aria-describedby"]}
   class={[
-    "inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl border bg-(--ui-color-surface) px-4 text-base font-semibold transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out focus-visible:outline-none active:translate-y-px disabled:cursor-not-allowed disabled:opacity-55 disabled:active:translate-y-0",
+    `
+      inline-flex h-14 w-full items-center justify-center gap-2 rounded-xl
+      border bg-(--ui-color-surface) px-4 text-base font-semibold
+      transition-[background-color,border-color,color,box-shadow,transform]
+      duration-150 ease-out
+      focus-visible:outline-none
+      active:translate-y-px
+      disabled:cursor-not-allowed disabled:opacity-55
+      disabled:active:translate-y-0
+    `,
     props.invalid
-      ? "border-(--ui-color-border-danger) text-(--ui-color-text-danger) focus-visible:shadow-[var(--ui-shadow-focus-danger)]"
-      : "border-(--ui-color-border-strong) text-(--ui-color-text) hover:border-(--ui-color-primary) hover:bg-(--ui-color-primary-soft) focus-visible:shadow-[var(--ui-shadow-focus)]",
+      ? `
+        border-(--ui-color-border-danger) text-(--ui-color-text-danger)
+        focus-visible:shadow-(--ui-shadow-focus-danger)
+      `
+      : `
+        border-(--ui-color-border-strong) text-(--ui-color-text)
+        hover:border-(--ui-color-primary) hover:bg-(--ui-color-primary-soft)
+        focus-visible:shadow-(--ui-shadow-focus)
+      `,
   ]}
   disabled={props.disabled}
   id={props.id}

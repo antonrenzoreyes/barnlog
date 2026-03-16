@@ -67,7 +67,9 @@
   {#if error}
     <p
       id={errorId}
-      class="text-[0.95rem] font-semibold leading-snug text-(--ui-color-text-danger)"
+      class="
+        text-[0.95rem] leading-snug font-semibold text-(--ui-color-text-danger)
+      "
       role="alert"
     >
       {error}
