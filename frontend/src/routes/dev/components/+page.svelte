@@ -55,22 +55,27 @@
 </svelte:head>
 
 <main
-  class="mx-auto min-h-screen w-full max-w-lg bg-(--ui-color-panel) px-4 py-4 pb-12"
+  class="mx-auto min-h-screen w-full max-w-lg bg-(--ui-color-panel) p-4 pb-12"
 >
   <BCard as="header" class="mb-5 rounded-2xl">
     <div class="flex items-center gap-3">
       <div
-        class="grid h-11 w-11 place-items-center rounded-xl border border-(--ui-color-border) bg-(--ui-color-primary-soft)"
+        class="
+          grid size-11 place-items-center rounded-xl border
+          border-(--ui-color-border) bg-(--ui-color-primary-soft)
+        "
       >
         <span
           aria-hidden="true"
-          class="text-sm font-bold tracking-[0.05em] text-(--ui-color-primary-strong)"
+          class="
+            text-sm font-bold tracking-[0.05em] text-(--ui-color-primary-strong)
+          "
         >
           BL
         </span>
       </div>
       <div>
-        <h1 class="text-2xl font-semibold leading-tight text-(--ui-color-text)">
+        <h1 class="text-2xl/tight font-semibold text-(--ui-color-text)">
           Barn Log Components
         </h1>
         <p class="text-sm text-(--ui-color-text-soft)">
@@ -84,7 +89,10 @@
     <div class="mb-4 flex items-center justify-between gap-2">
       <div>
         <p
-          class="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-(--ui-color-text-soft)"
+          class="
+            text-[0.72rem] font-semibold tracking-[0.08em]
+            text-(--ui-color-text-soft) uppercase
+          "
         >
           Form Primitives
         </p>
@@ -154,7 +162,10 @@
   <BCard as="section" aria-label="BBadge examples" class="mt-4">
     <div class="mb-4">
       <p
-        class="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-(--ui-color-text-soft)"
+        class="
+          text-[0.72rem] font-semibold tracking-[0.08em]
+          text-(--ui-color-text-soft) uppercase
+        "
       >
         Display Tokens
       </p>
@@ -171,7 +182,10 @@
   <BCard as="section" aria-label="BButton examples" class="mt-4">
     <div class="mb-4">
       <p
-        class="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-(--ui-color-text-soft)"
+        class="
+          text-[0.72rem] font-semibold tracking-[0.08em]
+          text-(--ui-color-text-soft) uppercase
+        "
       >
         Actions
       </p>
@@ -198,7 +212,10 @@
   <BCard as="section" aria-label="BCard footer sample" class="mt-4">
     <div class="mb-4">
       <p
-        class="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-(--ui-color-text-soft)"
+        class="
+          text-[0.72rem] font-semibold tracking-[0.08em]
+          text-(--ui-color-text-soft) uppercase
+        "
       >
         Footer Actions
       </p>
@@ -219,7 +236,10 @@
   <BCard as="section" aria-label="BSelect examples" class="mt-4">
     <div class="mb-4">
       <p
-        class="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-(--ui-color-text-soft)"
+        class="
+          text-[0.72rem] font-semibold tracking-[0.08em]
+          text-(--ui-color-text-soft) uppercase
+        "
       >
         Choice Inputs
       </p>
@@ -270,7 +290,10 @@
   <BCard as="section" aria-label="BFileUploader examples" class="mt-4">
     <div class="mb-4">
       <p
-        class="text-[0.72rem] font-semibold uppercase tracking-[0.08em] text-(--ui-color-text-soft)"
+        class="
+          text-[0.72rem] font-semibold tracking-[0.08em]
+          text-(--ui-color-text-soft) uppercase
+        "
       >
         Media Input
       </p>
@@ -300,7 +323,7 @@
       {/snippet}
     </BField>
 
-    <p class="mt-3 whitespace-pre-line text-sm text-(--ui-color-text-soft)">
+    <p class="mt-3 text-sm whitespace-pre-line text-(--ui-color-text-soft)">
       {selectedUploadMessage}
     </p>
 

@@ -11,7 +11,9 @@
 </script>
 
 <Label.Root
-  class="block text-[0.95rem] font-semibold tracking-[0.01em] text-(--ui-color-text)"
+  class="
+    block text-[0.95rem] font-semibold tracking-[0.01em] text-(--ui-color-text)
+  "
   for={props.forId}
 >
   {props.text}
