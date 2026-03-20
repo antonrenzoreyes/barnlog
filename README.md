@@ -2,38 +2,44 @@
 
 Barn Log is a Go-first monorepo for a local-first, event-driven farm logging application.
 
-Current repository status is bootstrap-stage: a minimal Go app exists, with project stack and standards defined in `.aiassistant/rules/`.
-
 ## Tech Stack
 
 - Backend: Go 1.26.x, `net/http` + `chi`, SQLite, `sqlc`, `slog`
-- Frontend: Bun, SvelteKit 2 (Svelte 5) + TypeScript, Vite 7, Tailwind CSS 4, IndexedDB (Dexie)
+- Frontend: Bun, SvelteKit 2 (Svelte 5) + TypeScript, Vite 8, Tailwind CSS 4, IndexedDB (Dexie)
 - Frontend testing: Vitest (unit/component) + Playwright (e2e)
 - Architecture: pragmatic event-driven model (append-only events first, projections added as needed)
 
-See full stack decisions in `.aiassistant/rules/STACK.md`.
+## Project Guides
 
-## Standards
+- General repository workflow: `AGENTS.md`
+- Frontend-specific guidance: `frontend/AGENTS.md`
+- Backend-specific guidance: `backend/AGENTS.md`
+- Events table semantics and usage: `backend/internal/domain/events/EVENTS_TABLE.md`
 
-- Go architecture and coding rules: `.aiassistant/rules/GO_STANDARDS.md`
-- Go testing standards: `.aiassistant/rules/GO_TEST_STANDARDS.md`
-- SQL migration standards: `.aiassistant/rules/SQL_MIGRATION_STANDARDS.md`
-- Events context rules: `.aiassistant/rules/EVENTS_CONTEXT.md`
-- MCP usage and security standards: `.aiassistant/rules/MCP_STANDARDS.md`
+## AI Skills
+
+This repository uses repo-owned, project-local skills.
+
+- Canonical skill files (including custom skills) live in `.agents/skills/` and are committed to git.
+- `skills-lock.json` tracks registry-managed skill sources and hashes.
+- `bunx skills` is used to install/update registry skills; custom skills remain managed directly in this repository.
+
+```bash
+bunx skills list
+bunx skills check
+bunx skills update
+bunx skills experimental_install
+```
 
 ## Planning Workflow
 
-Planning artifacts are managed with the custom `barnboard` skill.
+Planning artifacts live alongside the codebase:
 
 - Epic docs: `docs/epics/EPIC-XX.md`
 - Story docs: `docs/user-stories/US-XX.md`
 - GitHub issues track execution with native sub-issues:
-- Epic -> Story
-- Story -> Task
-
-## Data Model Notes
-
-- Events table semantics and usage: `backend/internal/domain/events/EVENTS_TABLE.md`
+  - Epic -> Story
+  - Story -> Task
 
 ## Prerequisites
 
@@ -58,15 +64,7 @@ bun run dev
 
 ## Backend Runtime
 
-Runtime wiring currently includes:
-
-- Environment-driven configuration
-- Structured logging via `slog`
-- HTTP server with `chi` middleware
-- Graceful shutdown on `SIGINT`/`SIGTERM`
-- Basic operational endpoints: `/healthz`, `/readyz`
-- SQLite database path configuration
-- Automatic migration execution on startup
+Backend configuration is environment-driven. The server uses `slog`, `chi`, graceful shutdown, SQLite path configuration, and automatic migrations on startup by default.
 
 ### Environment Variables
 
@@ -146,42 +144,3 @@ sqlc generate -f backend/sqlc.yaml
 
 Generated package output:
 - `backend/internal/infrastructure/sqlite/sqlc`
-
-## Backend Layering Guide
-
-The backend is split to keep business rules stable while transport and storage remain replaceable.
-
-- `backend/cmd/server`: composition root and process startup. Wire dependencies here.
-- `backend/internal/domain`: core business concepts, invariants, and behavior.
-- `backend/internal/application`: use cases that orchestrate domain behavior.
-- `backend/internal/ports`: interfaces consumed by application/domain for external needs.
-- `backend/internal/adapters`: transport-facing adapters (HTTP handlers, DTO mapping).
-- `backend/internal/infrastructure`: concrete implementations (DB, logging integrations, file IO, external services).
-
-### Dependency Direction
-
-Use this direction only:
-
-- `domain` -> no internal dependency
-- `application` -> `domain` + `ports`
-- `ports` -> contracts only (no concrete implementation)
-- `adapters` -> `application` (+ mapping to transport models)
-- `infrastructure` -> `ports`/`application` as implementations
-
-Practical rule: domain and application must not import transport or database packages.
-
-### Request Flow (Example)
-
-1. HTTP request enters an adapter in `backend/internal/adapters`.
-2. Adapter validates/parses input and calls an application use case.
-3. Application coordinates domain logic and calls interfaces from `ports`.
-4. Infrastructure implementations satisfy those ports (for example, SQLite repository).
-5. Adapter maps use-case output to HTTP response.
-
-This keeps the core business layer testable without HTTP or database setup.
-
-## Near-Term Direction
-
-- Add HTTP routes and domain/application layers per Go standards
-- Introduce migrations, queries, and event-store schema
-- Expand frontend features and API integration

@@ -4,10 +4,18 @@
 
 - This file applies to all files under `src/lib/components/`.
 
-## Inheritance
+## Component Skills
 
-- Follow `frontend/AGENTS.md` for shared project rules (stack baseline, testing requirements, tooling, CI gates, commands, and skill workflow).
-- This file only defines component-specific standards to avoid duplication.
+- Use `$arrange` to improve component layout composition, spacing rhythm, and hierarchy.
+- Use `$typeset` to improve typography scale, readability, and text hierarchy.
+- Use `$colorize` to strengthen color usage and semantic emphasis.
+- Use `$bolder` to increase visual impact when components feel too generic.
+- Use `$quieter` to reduce visual intensity when components feel too aggressive.
+- Use `$distill` to remove unnecessary complexity and visual clutter.
+- Use `$polish` for a final pass on alignment, consistency, and finish quality.
+- Use `$normalize` to align component design with system conventions.
+- Use `$extract` to convert repeated patterns into reusable components and tokens.
+- Use `$harden` to improve resilience for unusual content and interaction edge cases.
 
 ## Component-Specific Standards
 
