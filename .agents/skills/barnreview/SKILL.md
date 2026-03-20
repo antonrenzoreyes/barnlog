@@ -1,6 +1,7 @@
 ---
 name: barnreview
 description: Review local changes in the Barn Log workspace for bugs, regressions, architecture drift, UX/design issues, accessibility gaps, and missing tests. Use when the user asks for a code review, PR review, diff review, merge-readiness check, or risk summary for changed files. Produce severity-ordered findings with file references and include an overall Mermaid sequence diagram so humans can quickly understand the full change scope.
+user-invocable: true
 ---
 
 # Barn Log Code Review

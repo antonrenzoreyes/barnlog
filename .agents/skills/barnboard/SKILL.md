@@ -1,6 +1,7 @@
 ---
 name: barnboard
 description: Create and maintain Barn Log planning artifacts using a lightweight docs-plus-issues workflow (epic docs, story docs, and linked Epic/Story/Task GitHub issues).
+user-invocable: true
 ---
 
 # Barnboard
