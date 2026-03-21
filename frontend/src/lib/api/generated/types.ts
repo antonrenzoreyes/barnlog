@@ -82,7 +82,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/uploads/photos": {
+    "/uploads/animal-photos": {
         parameters: {
             query?: never;
             header?: never;
@@ -92,8 +92,8 @@ export interface paths {
         get?: never;
         put?: never;
         /**
-         * Upload photo
-         * @description Uploads a photo file and returns a generated photo_id.
+         * Upload animal photo
+         * @description Uploads an animal photo (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif) and returns a generated file_id.
          */
         post: {
             parameters: {
@@ -102,20 +102,20 @@ export interface paths {
                 path?: never;
                 cookie?: never;
             };
-            /** @description Photo file */
+            /** @description Animal photo file (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif) */
             requestBody: {
                 content: {
                     /**
                      * @example {
-                     *       "photo": "(binary file)"
+                     *       "file": "(binary file)"
                      *     }
                      */
                     "multipart/form-data": {
                         /**
                          * Format: binary
-                         * @description Photo file to upload
+                         * @description Animal photo file to upload
                          */
-                        photo: string;
+                        file: string;
                     };
                 };
             };
@@ -126,10 +126,10 @@ export interface paths {
                         [name: string]: unknown;
                     };
                     content: {
-                        "application/json": components["schemas"]["httpapi.uploadPhotoResponse"];
+                        "application/json": components["schemas"]["httpapi.uploadFileResponse"];
                     };
                 };
-                /** @description Bad Request */
+                /** @description Bad Request (invalid_multipart | file_required | multiple_files_not_allowed | invalid_file | unsupported_file_type) */
                 400: {
                     headers: {
                         [name: string]: unknown;
@@ -138,7 +138,7 @@ export interface paths {
                         "application/json": components["schemas"]["httpapi.errorResponse"];
                     };
                 };
-                /** @description Request Entity Too Large */
+                /** @description Request Entity Too Large (file_too_large) */
                 413: {
                     headers: {
                         [name: string]: unknown;
@@ -147,7 +147,7 @@ export interface paths {
                         "application/json": components["schemas"]["httpapi.errorResponse"];
                     };
                 };
-                /** @description Internal Server Error */
+                /** @description Internal Server Error (internal_error) */
                 500: {
                     headers: {
                         [name: string]: unknown;
@@ -185,13 +185,15 @@ export interface components {
             /** @example ok */
             status?: string;
         };
-        "httpapi.uploadPhotoResponse": {
-            /** @example image/jpeg */
-            content_type?: string;
-            /** @example photo_123 */
-            photo_id?: string;
+        "httpapi.uploadFileResponse": {
+            /** @example image/png */
+            content_type: string;
+            /** @example file_123 */
+            file_id: string;
+            /** @example pepper.png */
+            file_name: string;
             /** @example 248123 */
-            size_bytes?: number;
+            size_bytes: number;
         };
     };
     responses: never;

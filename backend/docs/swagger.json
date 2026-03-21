@@ -33,14 +33,18 @@
                 },
                 "type": "object"
             },
-            "httpapi.uploadPhotoResponse": {
+            "httpapi.uploadFileResponse": {
                 "properties": {
                     "content_type": {
-                        "example": "image/jpeg",
+                        "example": "image/png",
                         "type": "string"
                     },
-                    "photo_id": {
-                        "example": "photo_123",
+                    "file_id": {
+                        "example": "file_123",
+                        "type": "string"
+                    },
+                    "file_name": {
+                        "example": "pepper.png",
                         "type": "string"
                     },
                     "size_bytes": {
@@ -48,6 +52,12 @@
                         "type": "integer"
                     }
                 },
+                "required": [
+                    "content_type",
+                    "file_id",
+                    "file_name",
+                    "size_bytes"
+                ],
                 "type": "object"
             }
         },
@@ -102,31 +112,31 @@
                 ]
             }
         },
-        "/uploads/photos": {
+        "/uploads/animal-photos": {
             "post": {
-                "description": "Uploads a photo file and returns a generated photo_id.",
+                "description": "Uploads an animal photo (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif) and returns a generated file_id.",
                 "requestBody": {
                     "content": {
                         "multipart/form-data": {
                             "example": {
-                                "photo": "(binary file)"
+                                "file": "(binary file)"
                             },
                             "schema": {
                                 "properties": {
-                                    "photo": {
-                                        "description": "Photo file to upload",
+                                    "file": {
+                                        "description": "Animal photo file to upload",
                                         "format": "binary",
                                         "type": "string"
                                     }
                                 },
                                 "required": [
-                                    "photo"
+                                    "file"
                                 ],
                                 "type": "object"
                             }
                         }
                     },
-                    "description": "Photo file",
+                    "description": "Animal photo file (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif)",
                     "required": true
                 },
                 "responses": {
@@ -134,7 +144,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/httpapi.uploadPhotoResponse"
+                                    "$ref": "#/components/schemas/httpapi.uploadFileResponse"
                                 }
                             }
                         },
@@ -148,7 +158,7 @@
                                 }
                             }
                         },
-                        "description": "Bad Request"
+                        "description": "Bad Request (invalid_multipart | file_required | multiple_files_not_allowed | invalid_file | unsupported_file_type)"
                     },
                     "413": {
                         "content": {
@@ -158,7 +168,7 @@
                                 }
                             }
                         },
-                        "description": "Request Entity Too Large"
+                        "description": "Request Entity Too Large (file_too_large)"
                     },
                     "500": {
                         "content": {
@@ -168,10 +178,10 @@
                                 }
                             }
                         },
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error (internal_error)"
                     }
                 },
-                "summary": "Upload photo",
+                "summary": "Upload animal photo",
                 "tags": [
                     "uploads"
                 ]

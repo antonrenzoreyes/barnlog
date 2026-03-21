@@ -16,7 +16,7 @@ type Config struct {
 	HTTPAddr        string
 	DBPath          string
 	MigrationsPath  string
-	PhotoDir        string
+	FileDir         string
 	AutoMigrate     bool
 	LogLevel        slog.Level
 	ShutdownTimeout time.Duration
@@ -29,7 +29,7 @@ func LoadFromEnv() (Config, error) {
 		HTTPAddr:        getenv("BARNLOG_HTTP_ADDR", ":8080"),
 		DBPath:          getenv("BARNLOG_DB_PATH", "backend/db/dev.sqlite3"),
 		MigrationsPath:  getenv("BARNLOG_MIGRATIONS_PATH", "backend/db/migrations"),
-		PhotoDir:        getenv("BARNLOG_PHOTO_DIR", "backend/uploads/photos"),
+		FileDir:         getenv("BARNLOG_FILE_DIR", "backend/uploads/files"),
 		AutoMigrate:     true,
 		ShutdownTimeout: 10 * time.Second,
 	}

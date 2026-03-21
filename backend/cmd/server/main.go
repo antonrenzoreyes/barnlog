@@ -91,8 +91,8 @@ func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
 	r.Use(middleware.Timeout(30 * time.Second))
 	r.Get("/swagger/openapi.json", openAPIDoc)
 	r.Mount("/", httpapi.Routes(httpapi.RouteDeps{
-		Logger:        logger,
-		PhotoStoreDir: cfg.PhotoDir,
+		Logger:       logger,
+		FileStoreDir: cfg.FileDir,
 	}))
 	return r
 }

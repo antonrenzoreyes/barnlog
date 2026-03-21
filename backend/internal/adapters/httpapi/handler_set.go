@@ -10,17 +10,17 @@ type handlers struct {
 }
 
 type uploadHandlers struct {
-	logger     *slog.Logger
-	photoStore photoStore
+	logger    *slog.Logger
+	fileStore fileStore
 }
 
 func newHandlers(logger *slog.Logger) handlers {
 	return handlers{logger: logger}
 }
 
-func newUploadHandlers(logger *slog.Logger, photoStore photoStore) uploadHandlers {
+func newUploadHandlers(logger *slog.Logger, fileStore fileStore) uploadHandlers {
 	return uploadHandlers{
-		logger:     logger,
-		photoStore: photoStore,
+		logger:    logger,
+		fileStore: fileStore,
 	}
 }

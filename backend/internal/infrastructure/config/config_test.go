@@ -12,7 +12,7 @@ func TestLoadFromEnvDefaults(t *testing.T) {
 	t.Setenv("BARNLOG_HTTP_ADDR", "")
 	t.Setenv("BARNLOG_DB_PATH", "")
 	t.Setenv("BARNLOG_MIGRATIONS_PATH", "")
-	t.Setenv("BARNLOG_PHOTO_DIR", "")
+	t.Setenv("BARNLOG_FILE_DIR", "")
 	t.Setenv("BARNLOG_AUTO_MIGRATE", "")
 	t.Setenv("BARNLOG_LOG_LEVEL", "")
 	t.Setenv("BARNLOG_SHUTDOWN_TIMEOUT", "")
@@ -34,8 +34,8 @@ func TestLoadFromEnvDefaults(t *testing.T) {
 	if cfg.MigrationsPath != "backend/db/migrations" {
 		t.Fatalf("expected MigrationsPath=backend/db/migrations, got %q", cfg.MigrationsPath)
 	}
-	if cfg.PhotoDir != "backend/uploads/photos" {
-		t.Fatalf("expected PhotoDir=backend/uploads/photos, got %q", cfg.PhotoDir)
+	if cfg.FileDir != "backend/uploads/files" {
+		t.Fatalf("expected FileDir=backend/uploads/files, got %q", cfg.FileDir)
 	}
 	if !cfg.AutoMigrate {
 		t.Fatalf("expected AutoMigrate=true by default")
@@ -53,7 +53,7 @@ func TestLoadFromEnvCustomValues(t *testing.T) {
 	t.Setenv("BARNLOG_HTTP_ADDR", ":9090")
 	t.Setenv("BARNLOG_DB_PATH", "backend/db/custom.sqlite3")
 	t.Setenv("BARNLOG_MIGRATIONS_PATH", "backend/db/custom-migrations")
-	t.Setenv("BARNLOG_PHOTO_DIR", "backend/uploads/custom-photos")
+	t.Setenv("BARNLOG_FILE_DIR", "backend/uploads/custom-files")
 	t.Setenv("BARNLOG_AUTO_MIGRATE", "false")
 	t.Setenv("BARNLOG_LOG_LEVEL", "debug")
 	t.Setenv("BARNLOG_SHUTDOWN_TIMEOUT", "3s")
@@ -75,8 +75,8 @@ func TestLoadFromEnvCustomValues(t *testing.T) {
 	if cfg.MigrationsPath != "backend/db/custom-migrations" {
 		t.Fatalf("expected MigrationsPath=backend/db/custom-migrations, got %q", cfg.MigrationsPath)
 	}
-	if cfg.PhotoDir != "backend/uploads/custom-photos" {
-		t.Fatalf("expected PhotoDir=backend/uploads/custom-photos, got %q", cfg.PhotoDir)
+	if cfg.FileDir != "backend/uploads/custom-files" {
+		t.Fatalf("expected FileDir=backend/uploads/custom-files, got %q", cfg.FileDir)
 	}
 	if cfg.AutoMigrate {
 		t.Fatalf("expected AutoMigrate=false, got true")

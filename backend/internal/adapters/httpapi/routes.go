@@ -11,19 +11,23 @@ import (
 
 // RouteDeps contains dependencies required to build HTTP routes.
 type RouteDeps struct {
-	Logger        *slog.Logger
-	PhotoStoreDir string
+	Logger       *slog.Logger
+	FileStoreDir string
 }
 
 // Routes builds the public HTTP router for backend endpoints.
 func Routes(deps RouteDeps) http.Handler {
 	r := chi.NewRouter()
 	h := newHandlers(deps.Logger)
-	upload := newUploadHandlers(deps.Logger, newFilePhotoStore(deps.PhotoStoreDir))
+	store := newFileStore(deps.FileStoreDir)
+	if store == nil {
+		deps.Logger.Error("invalid file store dir", slog.String("file_store_dir", deps.FileStoreDir))
+	}
+	upload := newUploadHandlers(deps.Logger, store)
 
 	r.Get("/healthz", h.healthz)
 	r.Get("/readyz", h.readyz)
-	r.Post("/uploads/photos", upload.uploadPhoto)
+	r.Post("/uploads/animal-photos", upload.uploadAnimalPhoto)
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/openapi.json"),
 	))
