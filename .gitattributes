@@ -13,3 +13,10 @@ frontend/src/lib/api/generated/** linguist-generated=true
 docs/prototype/** linguist-generated=true
 docs/prototype/docs/** linguist-generated=false
 docs/prototype/output/playwright/prototype-state/** linguist-generated=false
+
+# Third-party skills synced into repo
+.agents/skills/** linguist-generated=true
+
+# Keep repo-owned first-party skills reviewable
+.agents/skills/barnboard/** linguist-generated=false
+.agents/skills/barnreview/** linguist-generated=false

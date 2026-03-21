@@ -4,6 +4,13 @@
 
 - This file applies to all work under `frontend/`.
 
+## Skills
+
+- Use `$critique` to evaluate design effectiveness from a UX perspective.
+- Use `$frontend-design` to build distinctive, production-grade frontend interfaces that avoid generic AI aesthetics.
+- Use `$svelte-code-writer` whenever creating, editing, or analyzing any Svelte component (`.svelte`) or module (`.svelte.ts`/`.svelte.js`).
+- Use `$svelte-core-bestpractices` to enforce modern Svelte reactivity, event handling, styling, and integration patterns.
+
 ## Stack Baseline
 
 - Framework: SvelteKit 2 with Svelte 5.
@@ -31,38 +38,17 @@
 - For Svelte or SvelteKit documentation and framework-specific guidance, use the `svelte` MCP server.
 - For browser automation, UI flow checks, screenshots, and Playwright-driven E2E work, use `playwright-cli`.
 
-## Skill Workflow
-
-- For UI vibe/design quality checks, use the following skills:
-  1. `$critique`
-- For implementation, use the following skills:
-  1. `$frontend-design`
-  2. `$svelte-code-writer`
-  3. `$svelte-core-bestpractices`
-
 ## Architecture
 
 - Frontend is CSR-only.
 - Do not add SvelteKit server routes/endpoints for business logic.
 - All domain and persistence logic lives in the Go backend.
 
-## API Integration
-
-- Treat the Go service as the single source of truth for domain data.
-- Keep API calls in typed client modules under `src/lib/api`.
-- Default to OpenAPI-generated types for request/response contracts; document any handwritten type exceptions inline.
-
 ## Environment
 
 - Configure backend base URL with public env vars only (for example, `PUBLIC_API_BASE_URL`).
 - Never store secrets in frontend env or source.
 - This project does not implement user authentication.
-
-## Error Handling
-
-- Handle network errors, timeouts, and non-2xx responses consistently in API client utilities.
-- As API utilities are added, normalize errors to one shared app-level format in `src/lib/api` and have pages/components consume that normalized form only.
-- Surface clear user-facing loading and error states in pages/components.
 
 ## CI Gates
 
