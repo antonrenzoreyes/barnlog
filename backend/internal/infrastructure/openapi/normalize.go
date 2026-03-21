@@ -8,7 +8,8 @@ func Normalize(payload map[string]any) {
 	normalizeVersion(payload)
 	normalizePublicSecurity(payload)
 	normalizeExternalDocs(payload)
-	normalizeUploadPhotoRequestBody(payload)
+	normalizeUploadAnimalPhotoRequestBody(payload)
+	normalizeUploadAnimalPhotoResponses(payload)
 }
 
 func normalizeVersion(payload map[string]any) {
@@ -21,12 +22,12 @@ func normalizeVersion(payload map[string]any) {
 	}
 }
 
-func normalizeUploadPhotoRequestBody(payload map[string]any) {
+func normalizeUploadAnimalPhotoRequestBody(payload map[string]any) {
 	paths, ok := payload["paths"].(map[string]any)
 	if !ok {
 		return
 	}
-	uploads, ok := paths["/uploads/photos"].(map[string]any)
+	uploads, ok := paths["/uploads/animal-photos"].(map[string]any)
 	if !ok {
 		return
 	}
@@ -46,18 +47,51 @@ func normalizeUploadPhotoRequestBody(payload map[string]any) {
 	multipart := ensureMap(content, "multipart/form-data")
 	schema := ensureMap(multipart, "schema")
 	schema["type"] = "object"
-	schema["required"] = ensureContainsString(schema["required"], "photo")
+	schema["required"] = ensureContainsString(schema["required"], "file")
 
 	properties := ensureMap(schema, "properties")
-	properties["photo"] = map[string]any{
+	properties["file"] = map[string]any{
 		"type":        "string",
 		"format":      "binary",
-		"description": "Photo file to upload",
+		"description": "Animal photo file to upload",
 	}
 
 	example := ensureMap(multipart, "example")
-	example["photo"] = "(binary file)"
+	example["file"] = "(binary file)"
 	delete(content, "application/x-www-form-urlencoded")
+}
+
+func normalizeUploadAnimalPhotoResponses(payload map[string]any) {
+	paths, ok := payload["paths"].(map[string]any)
+	if !ok {
+		return
+	}
+
+	uploads, ok := paths["/uploads/animal-photos"].(map[string]any)
+	if !ok {
+		return
+	}
+	post, ok := uploads["post"].(map[string]any)
+	if !ok {
+		return
+	}
+
+	responses := ensureMap(post, "responses")
+	ensureMap(responses, "400")["description"] = "Bad Request (invalid_multipart | file_required | multiple_files_not_allowed | invalid_file | unsupported_file_type)"
+	ensureMap(responses, "413")["description"] = "Request Entity Too Large (file_too_large)"
+	ensureMap(responses, "500")["description"] = "Internal Server Error (internal_error)"
+
+	components := ensureMap(payload, "components")
+	schemas := ensureMap(components, "schemas")
+	uploadFileResponse, ok := schemas["httpapi.uploadFileResponse"].(map[string]any)
+	if !ok {
+		return
+	}
+
+	uploadFileResponse["required"] = ensureContainsString(uploadFileResponse["required"], "file_id")
+	uploadFileResponse["required"] = ensureContainsString(uploadFileResponse["required"], "file_name")
+	uploadFileResponse["required"] = ensureContainsString(uploadFileResponse["required"], "content_type")
+	uploadFileResponse["required"] = ensureContainsString(uploadFileResponse["required"], "size_bytes")
 }
 
 func normalizeExternalDocs(payload map[string]any) {

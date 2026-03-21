@@ -40,14 +40,18 @@ const docTemplate = `{
                 },
                 "type": "object"
             },
-            "httpapi.uploadPhotoResponse": {
+            "httpapi.uploadFileResponse": {
                 "properties": {
                     "content_type": {
-                        "example": "image/jpeg",
+                        "example": "image/png",
                         "type": "string"
                     },
-                    "photo_id": {
-                        "example": "photo_123",
+                    "file_id": {
+                        "example": "file_123",
+                        "type": "string"
+                    },
+                    "file_name": {
+                        "example": "pepper.png",
                         "type": "string"
                     },
                     "size_bytes": {
@@ -55,6 +59,12 @@ const docTemplate = `{
                         "type": "integer"
                     }
                 },
+                "required": [
+                    "content_type",
+                    "file_id",
+                    "file_name",
+                    "size_bytes"
+                ],
                 "type": "object"
             }
         }
@@ -111,14 +121,14 @@ const docTemplate = `{
                 ]
             }
         },
-        "/uploads/photos": {
+        "/uploads/animal-photos": {
             "post": {
-                "description": "Uploads a photo file and returns a generated photo_id.",
+                "description": "Uploads an animal photo (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif) and returns a generated file_id.",
                 "requestBody": {
                     "content": {
                         "application/x-www-form-urlencoded": {
                             "schema": {
-                                "title": "photo",
+                                "title": "file",
                                 "type": "file"
                             }
                         },
@@ -128,7 +138,7 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "description": "Photo file",
+                    "description": "Animal photo file (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif)",
                     "required": true
                 },
                 "responses": {
@@ -136,7 +146,7 @@ const docTemplate = `{
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/httpapi.uploadPhotoResponse"
+                                    "$ref": "#/components/schemas/httpapi.uploadFileResponse"
                                 }
                             }
                         },
@@ -150,7 +160,7 @@ const docTemplate = `{
                                 }
                             }
                         },
-                        "description": "Bad Request"
+                        "description": "invalid_multipart | file_required | multiple_files_not_allowed | invalid_file | unsupported_file_type"
                     },
                     "413": {
                         "content": {
@@ -160,7 +170,7 @@ const docTemplate = `{
                                 }
                             }
                         },
-                        "description": "Request Entity Too Large"
+                        "description": "file_too_large"
                     },
                     "500": {
                         "content": {
@@ -170,10 +180,10 @@ const docTemplate = `{
                                 }
                             }
                         },
-                        "description": "Internal Server Error"
+                        "description": "internal_error"
                     }
                 },
-                "summary": "Upload photo",
+                "summary": "Upload animal photo",
                 "tags": [
                     "uploads"
                 ]

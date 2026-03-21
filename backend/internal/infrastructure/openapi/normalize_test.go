@@ -10,7 +10,7 @@ func TestNormalize(t *testing.T) {
 			"url":         "",
 		},
 		"paths": map[string]any{
-			"/uploads/photos": map[string]any{
+			"/uploads/animal-photos": map[string]any{
 				"post": map[string]any{
 					"requestBody": map[string]any{
 						"content": map[string]any{
@@ -43,7 +43,7 @@ func TestNormalize(t *testing.T) {
 	}
 
 	paths := payload["paths"].(map[string]any)
-	uploads := paths["/uploads/photos"].(map[string]any)
+	uploads := paths["/uploads/animal-photos"].(map[string]any)
 	post := uploads["post"].(map[string]any)
 	requestBody := post["requestBody"].(map[string]any)
 	content := requestBody["content"].(map[string]any)
@@ -59,13 +59,24 @@ func TestNormalize(t *testing.T) {
 
 	schema := multipart["schema"].(map[string]any)
 	properties := schema["properties"].(map[string]any)
-	photo := properties["photo"].(map[string]any)
-
-	if photo["type"] != "string" {
-		t.Fatalf("expected photo type string, got %v", photo["type"])
+	file := properties["file"].(map[string]any)
+	required := schema["required"].([]any)
+	foundFileRequired := false
+	for _, v := range required {
+		if s, ok := v.(string); ok && s == "file" {
+			foundFileRequired = true
+			break
+		}
 	}
-	if photo["format"] != "binary" {
-		t.Fatalf("expected photo format binary, got %v", photo["format"])
+	if !foundFileRequired {
+		t.Fatalf(`expected schema.required to contain "file"`)
+	}
+
+	if file["type"] != "string" {
+		t.Fatalf("expected file type string, got %v", file["type"])
+	}
+	if file["format"] != "binary" {
+		t.Fatalf("expected file format binary, got %v", file["format"])
 	}
 }
 
@@ -87,12 +98,12 @@ func TestNormalizeKeepsValidExternalDocs(t *testing.T) {
 func TestNormalizePreservesExistingMultipartMetadata(t *testing.T) {
 	payload := map[string]any{
 		"paths": map[string]any{
-			"/uploads/photos": map[string]any{
+			"/uploads/animal-photos": map[string]any{
 				"post": map[string]any{
 					"requestBody": map[string]any{
 						"content": map[string]any{
 							"multipart/form-data": map[string]any{
-								"encoding": map[string]any{"photo": map[string]any{"contentType": "image/jpeg"}},
+								"encoding": map[string]any{"file": map[string]any{"contentType": "image/jpeg"}},
 							},
 						},
 					},
@@ -104,7 +115,7 @@ func TestNormalizePreservesExistingMultipartMetadata(t *testing.T) {
 	Normalize(payload)
 
 	paths := payload["paths"].(map[string]any)
-	uploads := paths["/uploads/photos"].(map[string]any)
+	uploads := paths["/uploads/animal-photos"].(map[string]any)
 	post := uploads["post"].(map[string]any)
 	requestBody := post["requestBody"].(map[string]any)
 	content := requestBody["content"].(map[string]any)
@@ -112,5 +123,68 @@ func TestNormalizePreservesExistingMultipartMetadata(t *testing.T) {
 
 	if _, ok := multipart["encoding"].(map[string]any); !ok {
 		t.Fatalf("expected existing multipart metadata to be preserved")
+	}
+}
+
+func TestNormalizeMarksUploadResponseFieldsAsRequired(t *testing.T) {
+	payload := map[string]any{
+		"components": map[string]any{
+			"schemas": map[string]any{
+				"httpapi.uploadFileResponse": map[string]any{
+					"properties": map[string]any{
+						"file_id":      map[string]any{"type": "string"},
+						"file_name":    map[string]any{"type": "string"},
+						"content_type": map[string]any{"type": "string"},
+						"size_bytes":   map[string]any{"type": "integer"},
+					},
+				},
+			},
+		},
+		"paths": map[string]any{
+			"/uploads/animal-photos": map[string]any{
+				"post": map[string]any{
+					"responses": map[string]any{
+						"400": map[string]any{"description": "Bad Request"},
+						"413": map[string]any{"description": "Request Entity Too Large"},
+						"500": map[string]any{"description": "Internal Server Error"},
+					},
+				},
+			},
+		},
+	}
+
+	Normalize(payload)
+
+	components := payload["components"].(map[string]any)
+	schemas := components["schemas"].(map[string]any)
+	uploadFile := schemas["httpapi.uploadFileResponse"].(map[string]any)
+	required := uploadFile["required"].([]any)
+
+	requiredSet := map[string]bool{}
+	for _, field := range required {
+		if s, ok := field.(string); ok {
+			requiredSet[s] = true
+		}
+	}
+
+	for _, field := range []string{"file_id", "file_name", "content_type", "size_bytes"} {
+		if !requiredSet[field] {
+			t.Fatalf("expected required to contain %q, got %#v", field, required)
+		}
+	}
+
+	paths := payload["paths"].(map[string]any)
+	uploads := paths["/uploads/animal-photos"].(map[string]any)
+	post := uploads["post"].(map[string]any)
+	responses := post["responses"].(map[string]any)
+
+	if responses["400"].(map[string]any)["description"] == "Bad Request" {
+		t.Fatalf("expected 400 description to be normalized with upload error codes")
+	}
+	if responses["413"].(map[string]any)["description"] == "Request Entity Too Large" {
+		t.Fatalf("expected 413 description to be normalized with upload error code")
+	}
+	if responses["500"].(map[string]any)["description"] == "Internal Server Error" {
+		t.Fatalf("expected 500 description to be normalized with upload error code")
 	}
 }

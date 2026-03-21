@@ -13,8 +13,9 @@ type errorResponse struct {
 	Error string `json:"error" example:"invalid_json"`
 }
 
-type uploadPhotoResponse struct {
-	PhotoID     string `json:"photo_id" example:"photo_123"`
-	ContentType string `json:"content_type" example:"image/jpeg"`
-	SizeBytes   int64  `json:"size_bytes" example:"248123"`
+type uploadFileResponse struct {
+	FileID      string `json:"file_id" example:"file_123" binding:"required"`
+	FileName    string `json:"file_name" example:"pepper.png" binding:"required"`
+	ContentType string `json:"content_type" example:"image/png" binding:"required"`
+	SizeBytes   int64  `json:"size_bytes" example:"248123" binding:"required"`
 }
