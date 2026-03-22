@@ -42,6 +42,12 @@ user-invocable: true
 - Why it matters
 - Suggested fix
 
+File reference format requirements:
+- Use repository-relative references only.
+- Canonical format: `<repo-relative-path>:<line>` (for example: `frontend/src/routes/+page.svelte:42`).
+- Do not use local absolute filesystem paths (for example: `/Users/...`, `C:\\...`) or `file://` URLs.
+- Prefer plain-text repo-relative references over local clickable links when generating GitHub comments/reviews.
+
 2. Walkthrough:
 - 3-6 sentences describing the overall change intent and behavior impact.
 
