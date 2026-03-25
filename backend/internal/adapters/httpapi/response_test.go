@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -8,8 +9,9 @@ import (
 )
 
 func TestWriteJSONSuccess(t *testing.T) {
-	rec := httptest.NewRecorder()
+	t.Parallel()
 
+	rec := httptest.NewRecorder()
 	writeJSON(rec, http.StatusCreated, map[string]any{"created": true})
 
 	if rec.Code != http.StatusCreated {
@@ -25,6 +27,8 @@ func TestWriteJSONSuccess(t *testing.T) {
 }
 
 func TestWriteJSONMarshalError(t *testing.T) {
+	t.Parallel()
+
 	rec := httptest.NewRecorder()
 
 	// channels cannot be marshaled by encoding/json
@@ -35,5 +39,39 @@ func TestWriteJSONMarshalError(t *testing.T) {
 	}
 	if got := strings.TrimSpace(rec.Body.String()); got != http.StatusText(http.StatusInternalServerError) {
 		t.Fatalf("expected body %q, got %q", http.StatusText(http.StatusInternalServerError), got)
+	}
+}
+
+func TestWriteError_UsesAllowedCode(t *testing.T) {
+	t.Parallel()
+
+	rec := httptest.NewRecorder()
+	writeError(rec, http.StatusBadRequest, "not_found")
+
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
+
+	var payload map[string]any
+	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
+		t.Fatalf("decode payload: %v", err)
+	}
+	if payload["error"] != "not_found" {
+		t.Fatalf("expected error=not_found, got %#v", payload["error"])
+	}
+}
+
+func TestWriteError_NormalizesUnknownCode(t *testing.T) {
+	t.Parallel()
+
+	rec := httptest.NewRecorder()
+	writeError(rec, http.StatusBadRequest, "totally_unknown_code")
+
+	var payload map[string]any
+	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
+		t.Fatalf("decode payload: %v", err)
+	}
+	if payload["error"] != "internal_error" {
+		t.Fatalf("expected error=internal_error, got %#v", payload["error"])
 	}
 }

@@ -3,6 +3,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -84,6 +85,9 @@ func validateCanonicalSpecPath(path string) (string, error) {
 	if resolvedPath != expectedPath {
 		return "", fmt.Errorf("path %q must resolve to %q", path, "backend/openapi/openapi.yaml")
 	}
+	if err := ensureNoSymlinkInPath(resolvedPath); err != nil {
+		return "", err
+	}
 	return resolvedPath, nil
 }
 
@@ -101,6 +105,9 @@ func validateOutputPath(path, expectedExt string) (string, error) {
 	}
 	if ext := strings.ToLower(filepath.Ext(resolvedPath)); ext != expectedExt {
 		return "", fmt.Errorf("path %q must use %s extension", path, expectedExt)
+	}
+	if err := ensureNoSymlinkInPath(resolvedPath); err != nil {
+		return "", err
 	}
 	return resolvedPath, nil
 }
@@ -130,5 +137,35 @@ func ensureParentDir(path string) error {
 	if err := os.MkdirAll(dir, 0o750); err != nil {
 		return fmt.Errorf("create parent directory %q: %w", dir, err)
 	}
+	return nil
+}
+
+func ensureNoSymlinkInPath(path string) error {
+	current := filepath.Clean(path)
+	components := []string{current}
+
+	for {
+		parent := filepath.Dir(current)
+		if parent == current {
+			break
+		}
+		components = append(components, parent)
+		current = parent
+	}
+
+	for i := len(components) - 1; i >= 0; i-- {
+		component := components[i]
+		info, err := os.Lstat(component)
+		if err != nil {
+			if errors.Is(err, os.ErrNotExist) {
+				continue
+			}
+			return fmt.Errorf("inspect path component %q: %w", component, err)
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return fmt.Errorf("path %q contains symlink component %q", path, component)
+		}
+	}
+
 	return nil
 }
