@@ -4,25 +4,23 @@
 package openapicontract
 
 import (
-	"time"
-
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // HttpapiErrorResponse defines model for httpapi.errorResponse.
 type HttpapiErrorResponse struct {
-	Error *string `json:"error,omitempty"`
+	Error string `json:"error"`
 }
 
 // HttpapiReadyResponse defines model for httpapi.readyResponse.
 type HttpapiReadyResponse struct {
-	Status    *string    `json:"status,omitempty"`
-	Timestamp *time.Time `json:"timestamp,omitempty"`
+	Status    string `json:"status"`
+	Timestamp string `json:"timestamp"`
 }
 
 // HttpapiStatusResponse defines model for httpapi.statusResponse.
 type HttpapiStatusResponse struct {
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 }
 
 // HttpapiUploadFileResponse defines model for httpapi.uploadFileResponse.

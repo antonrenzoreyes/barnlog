@@ -69,6 +69,39 @@ func TestJSONUploadFileResponseRequiredFields(t *testing.T) {
 	}
 }
 
+func TestJSONSystemResponseContracts(t *testing.T) {
+	t.Parallel()
+
+	payload := decodeJSONPayload(t)
+	components := mustMap(t, payload["components"], "components")
+	schemas := mustMap(t, components["schemas"], "components.schemas")
+
+	statusResponse := mustMap(t, schemas["httpapi.statusResponse"], "components.schemas.httpapi.statusResponse")
+	statusRequired := mustSlice(t, statusResponse["required"], "components.schemas.httpapi.statusResponse.required")
+	if !containsString(statusRequired, "status") {
+		t.Fatalf("expected statusResponse required fields to contain %q, got %v", "status", statusRequired)
+	}
+
+	readyResponse := mustMap(t, schemas["httpapi.readyResponse"], "components.schemas.httpapi.readyResponse")
+	readyRequired := mustSlice(t, readyResponse["required"], "components.schemas.httpapi.readyResponse.required")
+	for _, field := range []string{"status", "timestamp"} {
+		if !containsString(readyRequired, field) {
+			t.Fatalf("expected readyResponse required fields to contain %q, got %v", field, readyRequired)
+		}
+	}
+	readyProperties := mustMap(t, readyResponse["properties"], "components.schemas.httpapi.readyResponse.properties")
+	timestamp := mustMap(t, readyProperties["timestamp"], "components.schemas.httpapi.readyResponse.properties.timestamp")
+	if got := timestamp["format"]; got != nil {
+		t.Fatalf("expected readyResponse.timestamp format to be omitted, got %v", got)
+	}
+
+	errorResponse := mustMap(t, schemas["httpapi.errorResponse"], "components.schemas.httpapi.errorResponse")
+	errorRequired := mustSlice(t, errorResponse["required"], "components.schemas.httpapi.errorResponse.required")
+	if !containsString(errorRequired, "error") {
+		t.Fatalf("expected errorResponse required fields to contain %q, got %v", "error", errorRequired)
+	}
+}
+
 func decodeJSONPayload(t *testing.T) map[string]any {
 	t.Helper()
 

@@ -5,6 +5,8 @@ components:
                 error:
                     example: invalid_json
                     type: string
+            required:
+                - error
             type: object
         httpapi.readyResponse:
             properties:
@@ -13,14 +15,19 @@ components:
                     type: string
                 timestamp:
                     example: "2026-02-22T20:32:13Z"
-                    format: date-time
+                    pattern: '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$'
                     type: string
+            required:
+                - status
+                - timestamp
             type: object
         httpapi.statusResponse:
             properties:
                 status:
                     example: ok
                     type: string
+            required:
+                - status
             type: object
         httpapi.uploadFileResponse:
             properties:

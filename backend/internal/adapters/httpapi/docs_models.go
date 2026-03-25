@@ -2,24 +2,23 @@ package httpapi
 
 import (
 	"fmt"
-	"time"
 
 	openapicontract "barnlog/backend/internal/contracts/openapi"
 )
 
 func newStatusResponse(status string) openapicontract.HttpapiStatusResponse {
-	return openapicontract.HttpapiStatusResponse{Status: &status}
+	return openapicontract.HttpapiStatusResponse{Status: status}
 }
 
-func newReadyResponse(status string, timestamp time.Time) openapicontract.HttpapiReadyResponse {
+func newReadyResponse(status, timestamp string) openapicontract.HttpapiReadyResponse {
 	return openapicontract.HttpapiReadyResponse{
-		Status:    &status,
-		Timestamp: &timestamp,
+		Status:    status,
+		Timestamp: timestamp,
 	}
 }
 
 func newErrorResponse(code string) openapicontract.HttpapiErrorResponse {
-	return openapicontract.HttpapiErrorResponse{Error: &code}
+	return openapicontract.HttpapiErrorResponse{Error: code}
 }
 
 func newUploadFileResponse(
