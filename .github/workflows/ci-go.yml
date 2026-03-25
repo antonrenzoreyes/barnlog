@@ -4,10 +4,11 @@ on:
   pull_request:
     branches: [master]
     paths:
-      - "**/*.go"
+      - "backend/**"
       - "go.mod"
       - "go.sum"
       - ".golangci.yml"
+      - "Makefile"
       - ".github/workflows/ci-go.yml"
 
 permissions:
@@ -45,6 +46,9 @@ jobs:
         run: |
           go mod tidy
           git diff --exit-code -- go.mod go.sum
+
+      - name: Verify OpenAPI generated artifacts
+        run: make openapi-check
 
       - name: Vet (Go analyzers)
         run: go vet -waitgroup -hostport ./...

@@ -5,6 +5,8 @@ import (
 	"log/slog"
 	"net/http"
 
+	openapicontract "barnlog/backend/internal/contracts/openapi"
+
 	"github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 )
@@ -24,10 +26,12 @@ func Routes(deps RouteDeps) http.Handler {
 		deps.Logger.Error("invalid file store dir", slog.String("file_store_dir", deps.FileStoreDir))
 	}
 	upload := newUploadHandlers(deps.Logger, store)
+	server := oapiServerAdapter{
+		system: h,
+		upload: upload,
+	}
 
-	r.Get("/healthz", h.healthz)
-	r.Get("/readyz", h.readyz)
-	r.Post("/uploads/animal-photos", upload.uploadAnimalPhoto)
+	openapicontract.HandlerFromMux(server, r)
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("/swagger/openapi.json"),
 	))

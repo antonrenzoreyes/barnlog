@@ -5,8 +5,7 @@ on:
     branches: [master]
     paths:
       - "frontend/**"
-      - "backend/docs/swagger.yaml"
-      - "backend/docs/swagger.json"
+      - "backend/openapi/openapi.yaml"
       - ".github/workflows/frontend-ci.yml"
 
 permissions:

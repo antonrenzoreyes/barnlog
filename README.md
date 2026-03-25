@@ -144,3 +144,25 @@ sqlc generate -f backend/sqlc.yaml
 
 Generated package output:
 - `backend/internal/infrastructure/sqlite/sqlc`
+
+## OpenAPI Contract
+
+- Canonical OpenAPI spec: `backend/openapi/openapi.yaml`
+- API contract changes are made in the canonical spec, not in handler comments.
+- Regenerate OpenAPI docs artifacts from canonical spec:
+
+```bash
+make api-docs
+```
+
+- Generate backend OpenAPI contract code (models + chi server interfaces) via `oapi-codegen`:
+
+```bash
+make openapi-generate-types
+```
+
+- Verify OpenAPI generated artifacts are current:
+
+```bash
+make openapi-check
+```

@@ -38,19 +38,7 @@ var animalPhotoUploadPolicy = uploadPolicy{
 	unsupportedTypeError: "unsupported_file_type",
 }
 
-// uploadAnimalPhoto godoc
-//
-// @Summary Upload animal photo
-// @Description Uploads an animal photo (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif) and returns a generated file_id.
-// @Tags uploads
-// @Accept multipart/form-data
-// @Produce json
-// @Param file formData file true "Animal photo file (max 10 MiB; allowed MIME types: image/jpeg, image/png, image/webp, image/gif)"
-// @Success 201 {object} uploadFileResponse
-// @Failure 400 {object} errorResponse "invalid_multipart | file_required | multiple_files_not_allowed | invalid_file | unsupported_file_type"
-// @Failure 413 {object} errorResponse "file_too_large"
-// @Failure 500 {object} errorResponse "internal_error"
-// @Router /uploads/animal-photos [post]
+// uploadAnimalPhoto uploads a validated animal photo and returns file metadata.
 func (h uploadHandlers) uploadAnimalPhoto(w http.ResponseWriter, r *http.Request) {
 	h.uploadWithPolicy(w, r, animalPhotoUploadPolicy)
 }

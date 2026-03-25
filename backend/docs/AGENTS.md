@@ -7,7 +7,7 @@
 ## OpenAPI Artifacts
 
 - Treat the checked-in files in `backend/docs/` as generated artifacts unless the task explicitly requires manual edits.
-- Keep `docs.go`, `swagger.json`, and `swagger.yaml` aligned with their source definitions and handler behavior.
+- Keep `backend/docs/swagger.json` and `backend/docs/swagger.yaml` generated from `backend/openapi/openapi.yaml` via `make api-docs`.
 - If generated docs change, mention what source change caused the regeneration.
 
 ## Validation
