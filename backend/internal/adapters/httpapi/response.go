@@ -14,6 +14,7 @@ func writeJSON(w http.ResponseWriter, status int, payload any) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
+	// #nosec G705 -- payload is JSON-encoded and served with application/json.
 	_, _ = w.Write(append(body, '\n'))
 }
 
