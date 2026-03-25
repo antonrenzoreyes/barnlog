@@ -133,12 +133,19 @@ func (h uploadHandlers) uploadWithPolicy(w http.ResponseWriter, r *http.Request,
 		return
 	}
 
-	writeJSON(w, http.StatusCreated, uploadFileResponse{
-		FileID:      fileID,
-		FileName:    sanitizeUploadedFileName(fileHeader.Filename),
-		ContentType: contentType,
-		SizeBytes:   totalBytes,
-	})
+	response, err := newUploadFileResponse(
+		fileID,
+		sanitizeUploadedFileName(fileHeader.Filename),
+		contentType,
+		totalBytes,
+	)
+	if err != nil {
+		h.logger.Error("map upload response", slog.Any("error", err))
+		writeError(w, http.StatusInternalServerError, "internal_error")
+		return
+	}
+
+	writeJSON(w, http.StatusCreated, response)
 }
 
 func countMultipartFiles(files map[string][]*multipart.FileHeader) int {

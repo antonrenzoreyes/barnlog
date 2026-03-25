@@ -1,21 +1,40 @@
 package httpapi
 
-type statusResponse struct {
-	Status string `json:"status"`
+import (
+	"fmt"
+	"time"
+
+	openapicontract "barnlog/backend/internal/contracts/openapi"
+)
+
+func newStatusResponse(status string) openapicontract.HttpapiStatusResponse {
+	return openapicontract.HttpapiStatusResponse{Status: &status}
 }
 
-type readyResponse struct {
-	Status    string `json:"status"`
-	Timestamp string `json:"timestamp"`
+func newReadyResponse(status string, timestamp time.Time) openapicontract.HttpapiReadyResponse {
+	return openapicontract.HttpapiReadyResponse{
+		Status:    &status,
+		Timestamp: &timestamp,
+	}
 }
 
-type errorResponse struct {
-	Error string `json:"error"`
+func newErrorResponse(code string) openapicontract.HttpapiErrorResponse {
+	return openapicontract.HttpapiErrorResponse{Error: &code}
 }
 
-type uploadFileResponse struct {
-	FileID      string `json:"file_id"`
-	FileName    string `json:"file_name"`
-	ContentType string `json:"content_type"`
-	SizeBytes   int64  `json:"size_bytes"`
+func newUploadFileResponse(
+	fileID, fileName, contentType string,
+	sizeBytes int64,
+) (openapicontract.HttpapiUploadFileResponse, error) {
+	maxInt := int64(^uint(0) >> 1)
+	if sizeBytes < 0 || sizeBytes > maxInt {
+		return openapicontract.HttpapiUploadFileResponse{}, fmt.Errorf("size_bytes out of range: %d", sizeBytes)
+	}
+
+	return openapicontract.HttpapiUploadFileResponse{
+		FileId:      fileID,
+		FileName:    fileName,
+		ContentType: contentType,
+		SizeBytes:   int(sizeBytes),
+	}, nil
 }

@@ -1,3 +1,4 @@
+// Package openapi embeds and exposes the canonical OpenAPI specification.
 package openapi
 
 import (

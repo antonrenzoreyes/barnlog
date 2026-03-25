@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"sigs.k8s.io/yaml"
 )
@@ -18,13 +20,27 @@ func main() {
 	flag.Parse()
 
 	if err := run(*inPath, *jsonPath, *yamlPath); err != nil {
-		_, _ = fmt.Fprintf(os.Stderr, "openapi export failed: %v\n", err)
+		slog.Error("openapi export failed", "error", err)
 		os.Exit(1)
 	}
 }
 
 func run(inPath, jsonPath, yamlPath string) error {
-	yamlInput, err := os.ReadFile(inPath)
+	validatedInPath, err := validateCanonicalSpecPath(inPath)
+	if err != nil {
+		return fmt.Errorf("validate canonical spec path: %w", err)
+	}
+	validatedJSONPath, err := validateOutputPath(jsonPath, ".json")
+	if err != nil {
+		return fmt.Errorf("validate JSON output path: %w", err)
+	}
+	validatedYAMLPath, err := validateOutputPath(yamlPath, ".yaml")
+	if err != nil {
+		return fmt.Errorf("validate YAML output path: %w", err)
+	}
+
+	// #nosec G304 -- validated canonical path allowlist.
+	yamlInput, err := os.ReadFile(validatedInPath)
 	if err != nil {
 		return fmt.Errorf("read canonical spec: %w", err)
 	}
@@ -40,19 +56,72 @@ func run(inPath, jsonPath, yamlPath string) error {
 	}
 	jsonOutput = append(jsonOutput, '\n')
 
-	if err := ensureParentDir(jsonPath); err != nil {
+	if err := ensureParentDir(validatedJSONPath); err != nil {
 		return err
 	}
-	if err := ensureParentDir(yamlPath); err != nil {
+	if err := ensureParentDir(validatedYAMLPath); err != nil {
 		return err
 	}
-	if err := os.WriteFile(jsonPath, jsonOutput, 0o600); err != nil {
+	if err := os.WriteFile(validatedJSONPath, jsonOutput, 0o600); err != nil {
 		return fmt.Errorf("write OpenAPI JSON: %w", err)
 	}
-	if err := os.WriteFile(yamlPath, yamlInput, 0o600); err != nil {
+	if err := os.WriteFile(validatedYAMLPath, yamlInput, 0o600); err != nil {
 		return fmt.Errorf("write OpenAPI YAML: %w", err)
 	}
 
+	return nil
+}
+
+func validateCanonicalSpecPath(path string) (string, error) {
+	resolvedPath, err := resolvePath(path)
+	if err != nil {
+		return "", err
+	}
+	expectedPath, err := resolvePath("backend/openapi/openapi.yaml")
+	if err != nil {
+		return "", err
+	}
+	if resolvedPath != expectedPath {
+		return "", fmt.Errorf("path %q must resolve to %q", path, "backend/openapi/openapi.yaml")
+	}
+	return resolvedPath, nil
+}
+
+func validateOutputPath(path, expectedExt string) (string, error) {
+	resolvedPath, err := resolvePath(path)
+	if err != nil {
+		return "", err
+	}
+	docsRoot, err := resolvePath("backend/docs")
+	if err != nil {
+		return "", err
+	}
+	if err := ensurePathWithinRoot(resolvedPath, docsRoot); err != nil {
+		return "", err
+	}
+	if ext := strings.ToLower(filepath.Ext(resolvedPath)); ext != expectedExt {
+		return "", fmt.Errorf("path %q must use %s extension", path, expectedExt)
+	}
+	return resolvedPath, nil
+}
+
+func resolvePath(path string) (string, error) {
+	clean := filepath.Clean(path)
+	abs, err := filepath.Abs(clean)
+	if err != nil {
+		return "", fmt.Errorf("resolve absolute path for %q: %w", path, err)
+	}
+	return abs, nil
+}
+
+func ensurePathWithinRoot(path, root string) error {
+	relativePath, err := filepath.Rel(root, path)
+	if err != nil {
+		return fmt.Errorf("resolve path %q under root %q: %w", path, root, err)
+	}
+	if relativePath == ".." || strings.HasPrefix(relativePath, ".."+string(os.PathSeparator)) {
+		return fmt.Errorf("path %q must be under %q", path, root)
+	}
 	return nil
 }
 
