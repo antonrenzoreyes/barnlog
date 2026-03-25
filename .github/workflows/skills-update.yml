@@ -6,21 +6,27 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  skills-update:
+  update-skills:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+      files: ${{ steps.diff.outputs.files }}
 
     steps:
       - name: Checkout
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
@@ -34,40 +40,96 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git diff --quiet; then
+          mapfile -t changed_files < <(git status --porcelain | sed -E 's/^...//')
+
+          if [ "${#changed_files[@]}" -eq 0 ]; then
             echo "changed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          mapfile -t changed_files < <(git diff --name-only)
-          for file in "${changed_files[@]}"; do
-            case "$file" in
-              .agents/skills/*|skills-lock.json)
-                ;;
-              *)
-                echo "Unexpected file changed by skills update: $file"
-                exit 1
-                ;;
-            esac
+          declare -A allowed=()
+          for entry in "${changed_files[@]}"; do
+            if [[ "$entry" == *" -> "* ]]; then
+              old_path="${entry%% -> *}"
+              new_path="${entry##* -> }"
+              paths=("$old_path" "$new_path")
+            else
+              paths=("$entry")
+            fi
+
+            for file in "${paths[@]}"; do
+              case "$file" in
+                .agents/skills/*|skills-lock.json)
+                  allowed["$file"]=1
+                  ;;
+                *)
+                  echo "Unexpected file changed by skills update: $file"
+                  exit 1
+                  ;;
+              esac
+            done
           done
-
-          if git diff --quiet -- .agents/skills skills-lock.json; then
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-            exit 0
-          fi
 
           {
             echo "changed=true"
             echo "files<<EOF"
-            printf '%s\n' "${changed_files[@]}"
+            for file in "${!allowed[@]}"; do
+              echo "$file"
+            done | LC_ALL=C sort
             echo "EOF"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Create or update pull request
+      - name: Package skill update files
         if: steps.diff.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-          CHANGED_FILES: ${{ steps.diff.outputs.files }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          files=(.agents/skills)
+          if [ -f skills-lock.json ]; then
+            files+=(skills-lock.json)
+          fi
+
+          tar -czf /tmp/skills-update.tgz "${files[@]}"
+
+      - name: Upload skill update artifact
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: skills-update
+          path: /tmp/skills-update.tgz
+          if-no-files-found: error
+
+      - name: No changes
+        if: steps.diff.outputs.changed == 'false'
+        run: echo "No skills updates detected."
+
+  create-pr:
+    needs: update-skills
+    if: needs.update-skills.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CHANGED_FILES: ${{ needs.update-skills.outputs.files }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Download skill update artifact
+        uses: actions/download-artifact@f13a7caa40f5f35358c7f77a07e8d30ce600d6b9
+        with:
+          name: skills-update
+          path: /tmp
+
+      - name: Restore updated skill files
+        run: tar -xzf /tmp/skills-update.tgz
+
+      - name: Create or update pull request
         shell: bash
         run: |
           set -euo pipefail
@@ -87,7 +149,6 @@ jobs:
             done <<< "$CHANGED_FILES"
             echo
             echo "## Links"
-            echo "- Task: #89"
             echo "- Workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           } > "$body_file"
 
@@ -95,8 +156,9 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git checkout -B "$branch"
-          git add .agents/skills skills-lock.json
+          git add -A .agents/skills skills-lock.json
           git commit -m "$title"
+
           if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
             git fetch origin "$branch":"refs/remotes/origin/$branch"
             git push --force-with-lease origin "$branch"
@@ -110,7 +172,3 @@ jobs:
           else
             gh pr create --base master --head "$branch" --title "$title" --body-file "$body_file"
           fi
-
-      - name: No changes
-        if: steps.diff.outputs.changed == 'false'
-        run: echo "No skills updates detected."
