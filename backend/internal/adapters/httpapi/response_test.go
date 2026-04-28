@@ -66,6 +66,9 @@ func TestWriteError_NormalizesUnknownCode(t *testing.T) {
 
 	rec := httptest.NewRecorder()
 	writeError(rec, http.StatusBadRequest, "totally_unknown_code")
+	if rec.Code != http.StatusBadRequest {
+		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
+	}
 
 	var payload map[string]any
 	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {

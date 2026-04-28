@@ -9,7 +9,6 @@ import (
 )
 
 func TestRunWritesArtifacts(t *testing.T) {
-	t.Helper()
 	chdirToTempRepo(t)
 
 	input := []byte(strings.Join([]string{
@@ -56,7 +55,6 @@ func TestRunWritesArtifacts(t *testing.T) {
 }
 
 func TestValidateCanonicalSpecPathRejectsSymlink(t *testing.T) {
-	t.Helper()
 	chdirToTempRepo(t)
 
 	if err := os.MkdirAll("backend/openapi", 0o750); err != nil {
@@ -79,7 +77,6 @@ func TestValidateCanonicalSpecPathRejectsSymlink(t *testing.T) {
 }
 
 func TestValidateOutputPathRejectsSymlinkedDocsRoot(t *testing.T) {
-	t.Helper()
 	chdirToTempRepo(t)
 
 	if err := os.MkdirAll("backend", 0o750); err != nil {
@@ -102,7 +99,6 @@ func TestValidateOutputPathRejectsSymlinkedDocsRoot(t *testing.T) {
 }
 
 func TestValidateOutputPathRejectsWrongExtension(t *testing.T) {
-	t.Helper()
 	chdirToTempRepo(t)
 
 	if err := os.MkdirAll("backend/docs", 0o750); err != nil {
