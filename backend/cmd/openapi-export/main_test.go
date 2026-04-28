@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"os"
-	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -85,7 +84,7 @@ func TestValidateOutputPathRejectsSymlinkedDocsRoot(t *testing.T) {
 	if err := os.MkdirAll("docs-target", 0o750); err != nil {
 		t.Fatalf("create docs target dir: %v", err)
 	}
-	if err := os.Symlink(filepath.Join("..", "..", "docs-target"), "backend/docs"); err != nil {
+	if err := os.Symlink("docs-target", "backend/docs"); err != nil {
 		if os.IsPermission(err) {
 			t.Skipf("symlink not permitted: %v", err)
 		}

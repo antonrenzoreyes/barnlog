@@ -52,10 +52,7 @@ func TestWriteError_UsesAllowedCode(t *testing.T) {
 		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
 	}
 
-	var payload map[string]any
-	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
-		t.Fatalf("decode payload: %v", err)
-	}
+	payload := mustDecodeResponse(t, rec)
 	if payload["error"] != "not_found" {
 		t.Fatalf("expected error=not_found, got %#v", payload["error"])
 	}
@@ -70,11 +67,18 @@ func TestWriteError_NormalizesUnknownCode(t *testing.T) {
 		t.Fatalf("expected status %d, got %d", http.StatusBadRequest, rec.Code)
 	}
 
+	payload := mustDecodeResponse(t, rec)
+	if payload["error"] != "internal_error" {
+		t.Fatalf("expected error=internal_error, got %#v", payload["error"])
+	}
+}
+
+func mustDecodeResponse(t *testing.T, rec *httptest.ResponseRecorder) map[string]any {
+	t.Helper()
+
 	var payload map[string]any
 	if err := json.Unmarshal(rec.Body.Bytes(), &payload); err != nil {
 		t.Fatalf("decode payload: %v", err)
 	}
-	if payload["error"] != "internal_error" {
-		t.Fatalf("expected error=internal_error, got %#v", payload["error"])
-	}
+	return payload
 }
