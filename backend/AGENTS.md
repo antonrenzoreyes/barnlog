@@ -10,7 +10,7 @@
 - HTTP: `net/http` with `chi`.
 - Persistence: SQLite with SQL migrations and SQLC-generated accessors.
 - Logging: `slog`.
-- API docs: OpenAPI artifacts checked into `backend/docs`.
+- API docs: spec-first OpenAPI in `backend/openapi/openapi.yaml` with generated artifacts in `backend/docs`.
 - Architecture: pragmatic event-driven model with append-only events first and projections added as needed.
 
 ## Source Of Truth
@@ -24,6 +24,7 @@
 - Prefer `gopls` MCP tooling for Go-aware code navigation, symbol inspection, and refactoring when it is available.
 - Prefer `go doc` for local package and symbol documentation.
 - Use `pkg.go.dev` only when fuller public module documentation is needed, and make sure the viewed version matches this project.
+- Use `backend/openapi/openapi.yaml` as the API contract source of truth.
 
 ## Dependency Direction
 

@@ -170,20 +170,17 @@ export interface components {
     schemas: {
         "httpapi.errorResponse": {
             /** @example invalid_json */
-            error?: string;
+            error: string;
         };
         "httpapi.readyResponse": {
             /** @example ready */
-            status?: string;
-            /**
-             * Format: date-time
-             * @example 2026-02-22T20:32:13Z
-             */
-            timestamp?: string;
+            status: string;
+            /** @example 2026-02-22T20:32:13Z */
+            timestamp: string;
         };
         "httpapi.statusResponse": {
             /** @example ok */
-            status?: string;
+            status: string;
         };
         "httpapi.uploadFileResponse": {
             /** @example image/png */

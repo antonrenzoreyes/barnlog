@@ -1,0 +1,4 @@
+package: openapicontract
+generate:
+  models: true
+output: backend/internal/contracts/openapi/types.gen.go

@@ -46,8 +46,8 @@ func TestRoutes(t *testing.T) {
 				if !ok {
 					t.Fatalf("expected timestamp string, got %#v", payload["timestamp"])
 				}
-				if _, err := time.Parse(time.RFC3339, timestamp); err != nil {
-					t.Fatalf("expected RFC3339 timestamp, got %q: %v", timestamp, err)
+				if _, err := time.Parse("2006-01-02T15:04:05Z", timestamp); err != nil {
+					t.Fatalf("expected RFC3339 UTC timestamp without fractional seconds, got %q: %v", timestamp, err)
 				}
 			},
 		},

@@ -5,17 +5,7 @@ import (
 	"time"
 )
 
-// readyz godoc
-//
-// @Summary Readiness check
-// @Description Returns service readiness status and current UTC timestamp.
-// @Tags system
-// @Produce json
-// @Success 200 {object} readyResponse
-// @Router /readyz [get]
+// readyz returns service readiness status and current UTC timestamp.
 func (h handlers) readyz(w http.ResponseWriter, _ *http.Request) {
-	writeJSON(w, http.StatusOK, readyResponse{
-		Status:    "ready",
-		Timestamp: time.Now().UTC().Format(time.RFC3339),
-	})
+	writeJSON(w, http.StatusOK, newReadyResponse("ready", time.Now().UTC().Format(time.RFC3339)))
 }

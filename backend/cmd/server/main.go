@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -15,10 +14,9 @@ import (
 	"syscall"
 	"time"
 
-	"barnlog/backend/docs"
 	"barnlog/backend/internal/adapters/httpapi"
 	"barnlog/backend/internal/infrastructure/config"
-	"barnlog/backend/internal/infrastructure/openapi"
+	spec "barnlog/backend/openapi"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -27,10 +25,6 @@ import (
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 )
 
-// @title Barnlog Backend API
-// @version 1.0
-// @description Barnlog backend HTTP API.
-// @servers.url http://localhost:8080
 func main() {
 	if err := run(); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "server failed: %v\n", err)
@@ -98,15 +92,7 @@ func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
 }
 
 func openAPIDoc(w http.ResponseWriter, _ *http.Request) {
-	doc := docs.SwaggerInfo.ReadDoc()
-
-	var payload map[string]any
-	if err := json.Unmarshal([]byte(doc), &payload); err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
-	openapi.Normalize(payload)
-	body, err := json.Marshal(payload)
+	body, err := spec.JSON()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
