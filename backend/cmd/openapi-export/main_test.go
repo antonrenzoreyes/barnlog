@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 )
@@ -107,6 +108,47 @@ func TestValidateOutputPathRejectsWrongExtension(t *testing.T) {
 	_, err := validateOutputPath("backend/docs/swagger.txt", ".json")
 	if err == nil || !strings.Contains(err.Error(), "must use .json extension") {
 		t.Fatalf("expected extension validation error, got %v", err)
+	}
+}
+
+func TestValidatePathsAllowSymlinkedWorktreeParent(t *testing.T) {
+	wd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("getwd: %v", err)
+	}
+
+	physicalRepo := t.TempDir()
+	worktreeLink := filepath.Join(t.TempDir(), "repo-link")
+	if err := os.Symlink(physicalRepo, worktreeLink); err != nil {
+		if os.IsPermission(err) {
+			t.Skipf("symlink not permitted: %v", err)
+		}
+		t.Fatalf("create symlinked worktree path: %v", err)
+	}
+	if err := os.Chdir(worktreeLink); err != nil {
+		t.Fatalf("chdir symlinked worktree path: %v", err)
+	}
+	t.Cleanup(func() {
+		if err := os.Chdir(wd); err != nil {
+			t.Fatalf("restore cwd: %v", err)
+		}
+	})
+
+	if err := os.MkdirAll("backend/openapi", 0o750); err != nil {
+		t.Fatalf("create openapi dir: %v", err)
+	}
+	if err := os.MkdirAll("backend/docs", 0o750); err != nil {
+		t.Fatalf("create docs dir: %v", err)
+	}
+	if err := os.WriteFile("backend/openapi/openapi.yaml", []byte("openapi: 3.0.3\n"), 0o600); err != nil {
+		t.Fatalf("write canonical spec: %v", err)
+	}
+
+	if _, err := validateCanonicalSpecPath("backend/openapi/openapi.yaml"); err != nil {
+		t.Fatalf("expected canonical path to validate under symlinked worktree parent, got %v", err)
+	}
+	if _, err := validateOutputPath("backend/docs/swagger.json", ".json"); err != nil {
+		t.Fatalf("expected output path to validate under symlinked worktree parent, got %v", err)
 	}
 }
 

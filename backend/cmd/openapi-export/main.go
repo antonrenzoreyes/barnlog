@@ -3,7 +3,6 @@ package main
 
 import (
 	"encoding/json"
-	"errors"
 	"flag"
 	"fmt"
 	"log/slog"
@@ -85,7 +84,11 @@ func validateCanonicalSpecPath(path string) (string, error) {
 	if resolvedPath != expectedPath {
 		return "", fmt.Errorf("path %q must resolve to %q", path, "backend/openapi/openapi.yaml")
 	}
-	if err := ensureNoSymlinkInPath(resolvedPath); err != nil {
+	repoRoot, err := resolvePath(".")
+	if err != nil {
+		return "", err
+	}
+	if err := ensureNoSymlinkBetween(repoRoot, resolvedPath); err != nil {
 		return "", err
 	}
 	return resolvedPath, nil
@@ -106,7 +109,7 @@ func validateOutputPath(path, expectedExt string) (string, error) {
 	if ext := strings.ToLower(filepath.Ext(resolvedPath)); ext != expectedExt {
 		return "", fmt.Errorf("path %q must use %s extension", path, expectedExt)
 	}
-	if err := ensureNoSymlinkInPath(resolvedPath); err != nil {
+	if err := ensureNoSymlinkBetween(docsRoot, resolvedPath); err != nil {
 		return "", err
 	}
 	return resolvedPath, nil
@@ -140,24 +143,28 @@ func ensureParentDir(path string) error {
 	return nil
 }
 
-func ensureNoSymlinkInPath(path string) error {
-	current := filepath.Clean(path)
-	components := []string{current}
-
-	for {
-		parent := filepath.Dir(current)
-		if parent == current {
-			break
-		}
-		components = append(components, parent)
-		current = parent
+func ensureNoSymlinkBetween(root, path string) error {
+	if err := ensurePathWithinRoot(path, root); err != nil {
+		return err
 	}
 
-	for i := len(components) - 1; i >= 0; i-- {
-		component := components[i]
+	components := []string{filepath.Clean(root)}
+	relativePath, err := filepath.Rel(root, path)
+	if err != nil {
+		return fmt.Errorf("resolve path %q under root %q: %w", path, root, err)
+	}
+	if relativePath != "." {
+		current := components[0]
+		for _, part := range strings.Split(relativePath, string(os.PathSeparator)) {
+			current = filepath.Join(current, part)
+			components = append(components, current)
+		}
+	}
+
+	for _, component := range components {
 		info, err := os.Lstat(component)
 		if err != nil {
-			if errors.Is(err, os.ErrNotExist) {
+			if os.IsNotExist(err) {
 				continue
 			}
 			return fmt.Errorf("inspect path component %q: %w", component, err)
