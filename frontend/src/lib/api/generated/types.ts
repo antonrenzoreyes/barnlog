@@ -4,6 +4,118 @@
  */
 
 export interface paths {
+    "/animals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create animal
+         * @description Creates an animal by appending an animal.created event.
+         */
+        post: {
+            parameters: {
+                query?: never;
+                header?: {
+                    /** @description Idempotency request key (omit to disable idempotency) */
+                    "X-Request-Id"?: string;
+                    /** @description Request source */
+                    "X-Barnlog-Source"?: string;
+                };
+                path?: never;
+                cookie?: never;
+            };
+            /** @description Create animal payload */
+            requestBody: {
+                content: {
+                    /**
+                     * @example {
+                     *       "birthdate": "2021-03-04",
+                     *       "name": "Nanny",
+                     *       "photo_id": "photo_1",
+                     *       "species": "goat",
+                     *       "tag": "G-7"
+                     *     }
+                     */
+                    "application/json": components["schemas"]["httpapi.createAnimalRequest"];
+                };
+            };
+            responses: {
+                /** @description Idempotent replay */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.createAnimalResponse"];
+                    };
+                };
+                /** @description Created */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.createAnimalResponse"];
+                    };
+                };
+                /** @description Bad Request */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.errorResponse"];
+                    };
+                };
+                /** @description Conflict */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.errorResponse"];
+                    };
+                };
+                /** @description Request Entity Too Large */
+                413: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.errorResponse"];
+                    };
+                };
+                /** @description Unsupported Media Type */
+                415: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.errorResponse"];
+                    };
+                };
+                /** @description Internal Server Error */
+                500: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["httpapi.errorResponse"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/healthz": {
         parameters: {
             query?: never;
@@ -168,6 +280,43 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        "httpapi.createAnimalRequest": {
+            /**
+             * Format: date
+             * @example 2021-03-04
+             */
+            birthdate?: string;
+            /** @example Nanny */
+            name: string;
+            /** @example photo_1 */
+            photo_id?: string;
+            /**
+             * @example goat
+             * @enum {string}
+             */
+            species: "goat" | "pig" | "dog" | "cat";
+            /** @example G-7 */
+            tag?: string;
+        };
+        "httpapi.createAnimalResponse": {
+            /** @example animal_123 */
+            animal_id: string;
+            /**
+             * Format: date
+             * @example 2021-03-04
+             */
+            birthdate?: string;
+            /** @example event_123 */
+            event_id: string;
+            /** @example Nanny */
+            name?: string;
+            /** @example photo_1 */
+            photo_id?: string;
+            /** @example goat */
+            species?: string;
+            /** @example G-7 */
+            tag?: string;
+        };
         "httpapi.errorResponse": {
             /** @example invalid_json */
             error: string;
