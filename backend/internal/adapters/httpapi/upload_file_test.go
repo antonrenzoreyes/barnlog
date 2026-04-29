@@ -18,6 +18,7 @@ func TestUploadAnimalPhoto(t *testing.T) {
 	router := Routes(RouteDeps{
 		Logger:       testLogger(),
 		FileStoreDir: fileDir,
+		AnimalWriter: &fakeAnimalWriter{},
 	})
 
 	t.Run("created", func(t *testing.T) {

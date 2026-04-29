@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"io"
 	"log/slog"
@@ -8,13 +9,18 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"barnlog/backend/internal/application"
 	"barnlog/backend/internal/infrastructure/config"
 )
 
 func TestBuildRouterServesOpenAPIDoc(t *testing.T) {
 	t.Parallel()
 
-	router := buildRouter(config.Config{FileDir: t.TempDir()}, testLogger())
+	router := buildRouter(
+		config.Config{FileDir: t.TempDir()},
+		testLogger(),
+		Services{AnimalWriter: noopAnimalWriter{}},
+	)
 	request := httptest.NewRequest(http.MethodGet, "/swagger/openapi.json", nil)
 	recorder := httptest.NewRecorder()
 
@@ -38,4 +44,10 @@ func TestBuildRouterServesOpenAPIDoc(t *testing.T) {
 
 func testLogger() *slog.Logger {
 	return slog.New(slog.NewTextHandler(io.Discard, nil))
+}
+
+type noopAnimalWriter struct{}
+
+func (noopAnimalWriter) Create(context.Context, application.CreateAnimalInput) (application.CreateAnimalOutput, error) {
+	return application.CreateAnimalOutput{}, nil
 }
