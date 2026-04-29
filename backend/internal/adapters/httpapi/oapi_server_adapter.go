@@ -10,7 +10,12 @@ var _ openapicontract.ServerInterface = (*oapiServerAdapter)(nil)
 
 type oapiServerAdapter struct {
 	system handlers
+	animal animalHandlers
 	upload uploadHandlers
+}
+
+func (a oapiServerAdapter) PostAnimals(w http.ResponseWriter, r *http.Request, _ openapicontract.PostAnimalsParams) {
+	a.animal.createAnimal(w, r)
 }
 
 func (a oapiServerAdapter) GetHealthz(w http.ResponseWriter, r *http.Request) {

@@ -14,3 +14,14 @@ INSERT INTO events (
 ) VALUES (
     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
 );
+
+-- name: GetEventBySourceRequestID :one
+SELECT
+    id,
+    aggregate_type,
+    aggregate_id,
+    event_type,
+    payload_json
+FROM events
+WHERE source = ? AND request_id = ?
+LIMIT 1;

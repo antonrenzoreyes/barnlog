@@ -58,3 +58,41 @@ func (q *Queries) CreateEvent(ctx context.Context, arg CreateEventParams) error 
 	)
 	return err
 }
+
+const getEventBySourceRequestID = `-- name: GetEventBySourceRequestID :one
+SELECT
+    id,
+    aggregate_type,
+    aggregate_id,
+    event_type,
+    payload_json
+FROM events
+WHERE source = ? AND request_id = ?
+LIMIT 1
+`
+
+type GetEventBySourceRequestIDParams struct {
+	Source    string `json:"source"`
+	RequestID string `json:"request_id"`
+}
+
+type GetEventBySourceRequestIDRow struct {
+	ID            string `json:"id"`
+	AggregateType string `json:"aggregate_type"`
+	AggregateID   string `json:"aggregate_id"`
+	EventType     string `json:"event_type"`
+	PayloadJson   string `json:"payload_json"`
+}
+
+func (q *Queries) GetEventBySourceRequestID(ctx context.Context, arg GetEventBySourceRequestIDParams) (GetEventBySourceRequestIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getEventBySourceRequestID, arg.Source, arg.RequestID)
+	var i GetEventBySourceRequestIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.AggregateType,
+		&i.AggregateID,
+		&i.EventType,
+		&i.PayloadJson,
+	)
+	return i, err
+}
