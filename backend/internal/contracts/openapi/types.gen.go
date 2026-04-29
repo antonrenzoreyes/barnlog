@@ -7,6 +7,37 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for HttpapiCreateAnimalRequestSpecies.
+const (
+	Cat  HttpapiCreateAnimalRequestSpecies = "cat"
+	Dog  HttpapiCreateAnimalRequestSpecies = "dog"
+	Goat HttpapiCreateAnimalRequestSpecies = "goat"
+	Pig  HttpapiCreateAnimalRequestSpecies = "pig"
+)
+
+// HttpapiCreateAnimalRequest defines model for httpapi.createAnimalRequest.
+type HttpapiCreateAnimalRequest struct {
+	Birthdate *openapi_types.Date               `json:"birthdate,omitempty"`
+	Name      string                            `json:"name"`
+	PhotoId   *string                           `json:"photo_id,omitempty"`
+	Species   HttpapiCreateAnimalRequestSpecies `json:"species"`
+	Tag       *string                           `json:"tag,omitempty"`
+}
+
+// HttpapiCreateAnimalRequestSpecies defines model for HttpapiCreateAnimalRequest.Species.
+type HttpapiCreateAnimalRequestSpecies string
+
+// HttpapiCreateAnimalResponse defines model for httpapi.createAnimalResponse.
+type HttpapiCreateAnimalResponse struct {
+	AnimalId  string              `json:"animal_id"`
+	Birthdate *openapi_types.Date `json:"birthdate,omitempty"`
+	EventId   string              `json:"event_id"`
+	Name      *string             `json:"name,omitempty"`
+	PhotoId   *string             `json:"photo_id,omitempty"`
+	Species   *string             `json:"species,omitempty"`
+	Tag       *string             `json:"tag,omitempty"`
+}
+
 // HttpapiErrorResponse defines model for httpapi.errorResponse.
 type HttpapiErrorResponse struct {
 	Error string `json:"error"`
@@ -31,11 +62,23 @@ type HttpapiUploadFileResponse struct {
 	SizeBytes   int    `json:"size_bytes"`
 }
 
+// PostAnimalsParams defines parameters for PostAnimals.
+type PostAnimalsParams struct {
+	// XRequestId Idempotency request key (omit to disable idempotency)
+	XRequestId *string `json:"X-Request-Id,omitempty"`
+
+	// XBarnlogSource Request source
+	XBarnlogSource *string `json:"X-Barnlog-Source,omitempty"`
+}
+
 // PostUploadsAnimalPhotosMultipartBody defines parameters for PostUploadsAnimalPhotos.
 type PostUploadsAnimalPhotosMultipartBody struct {
 	// File Animal photo file to upload
 	File openapi_types.File `json:"file"`
 }
+
+// PostAnimalsJSONRequestBody defines body for PostAnimals for application/json ContentType.
+type PostAnimalsJSONRequestBody = HttpapiCreateAnimalRequest
 
 // PostUploadsAnimalPhotosMultipartRequestBody defines body for PostUploadsAnimalPhotos for multipart/form-data ContentType.
 type PostUploadsAnimalPhotosMultipartRequestBody PostUploadsAnimalPhotosMultipartBody
