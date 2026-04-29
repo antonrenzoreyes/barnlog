@@ -1,0 +1,174 @@
+name: Skills Update
+
+on:
+  schedule:
+    - cron: "0 4 * * 1" # Weekly on Monday at 04:00 UTC.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update-skills:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+      files: ${{ steps.diff.outputs.files }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+        with:
+          persist-credentials: false
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6
+
+      - name: Update repo-owned skills
+        run: bunx skills update
+
+      - name: Detect and validate changed files
+        id: diff
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mapfile -t changed_files < <(git status --porcelain | sed -E 's/^...//')
+
+          if [ "${#changed_files[@]}" -eq 0 ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          declare -A allowed=()
+          for entry in "${changed_files[@]}"; do
+            if [[ "$entry" == *" -> "* ]]; then
+              old_path="${entry%% -> *}"
+              new_path="${entry##* -> }"
+              paths=("$old_path" "$new_path")
+            else
+              paths=("$entry")
+            fi
+
+            for file in "${paths[@]}"; do
+              case "$file" in
+                .agents/skills/*|skills-lock.json)
+                  allowed["$file"]=1
+                  ;;
+                *)
+                  echo "Unexpected file changed by skills update: $file"
+                  exit 1
+                  ;;
+              esac
+            done
+          done
+
+          {
+            echo "changed=true"
+            echo "files<<EOF"
+            for file in "${!allowed[@]}"; do
+              echo "$file"
+            done | LC_ALL=C sort
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Package skill update files
+        if: steps.diff.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          files=(.agents/skills)
+          if [ -f skills-lock.json ]; then
+            files+=(skills-lock.json)
+          fi
+
+          tar -czf /tmp/skills-update.tgz "${files[@]}"
+
+      - name: Upload skill update artifact
+        if: steps.diff.outputs.changed == 'true'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f
+        with:
+          name: skills-update
+          path: /tmp/skills-update.tgz
+          if-no-files-found: error
+
+      - name: No changes
+        if: steps.diff.outputs.changed == 'false'
+        run: echo "No skills updates detected."
+
+  create-pr:
+    needs: update-skills
+    if: needs.update-skills.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      pull-requests: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      CHANGED_FILES: ${{ needs.update-skills.outputs.files }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Download skill update artifact
+        uses: actions/download-artifact@f13a7caa40f5f35358c7f77a07e8d30ce600d6b9
+        with:
+          name: skills-update
+          path: /tmp
+
+      - name: Restore updated skill files
+        run: tar -xzf /tmp/skills-update.tgz
+
+      - name: Create or update pull request
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          branch="chore/skills-update"
+          title="chore: update repo-owned skills"
+          body_file="$(mktemp)"
+
+          {
+            echo "## Summary"
+            echo "Automated weekly update of repo-owned skills via \`bunx skills update\`."
+            echo
+            echo "## Changed Files"
+            while IFS= read -r file; do
+              [ -z "$file" ] && continue
+              echo "- \`$file\`"
+            done <<< "$CHANGED_FILES"
+            echo
+            echo "## Links"
+            echo "- Workflow run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          } > "$body_file"
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git checkout -B "$branch"
+          git add -A .agents/skills skills-lock.json
+          git commit -m "$title"
+
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
+            git fetch origin "$branch":"refs/remotes/origin/$branch"
+            git push --force-with-lease origin "$branch"
+          else
+            git push --set-upstream origin "$branch"
+          fi
+
+          existing_pr_number="$(gh pr list --base master --head "$branch" --json number --jq '.[0].number // empty')"
+          if [ -n "$existing_pr_number" ]; then
+            gh pr edit "$existing_pr_number" --title "$title" --body-file "$body_file"
+          else
+            gh pr create --base master --head "$branch" --title "$title" --body-file "$body_file"
+          fi
