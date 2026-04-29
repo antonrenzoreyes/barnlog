@@ -3,6 +3,7 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -16,13 +17,13 @@ import (
 
 	"barnlog/backend/internal/adapters/httpapi"
 	"barnlog/backend/internal/infrastructure/config"
-	spec "barnlog/backend/openapi"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	gomigrate "github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/sqlite3"
+	_ "github.com/golang-migrate/migrate/v4/database/sqlite"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "modernc.org/sqlite"
 )
 
 func main() {
@@ -49,7 +50,18 @@ func run() error {
 	} else {
 		logger.Info("auto migration disabled")
 	}
-	srv := newHTTPServer(cfg, buildRouter(cfg, logger))
+	db, err := openSQLiteDB(cfg)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		if closeErr := db.Close(); closeErr != nil {
+			logger.Warn("close sqlite db", slog.Any("error", closeErr))
+		}
+	}()
+
+	services := newServices(cfg, db)
+	srv := newHTTPServer(cfg, buildRouter(cfg, logger, services))
 
 	logger.Info(
 		"http server starting",
@@ -77,29 +89,36 @@ func run() error {
 	return nil
 }
 
-func buildRouter(cfg config.Config, logger *slog.Logger) http.Handler {
+func buildRouter(cfg config.Config, logger *slog.Logger, services Services) http.Handler {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(30 * time.Second))
-	r.Get("/swagger/openapi.json", openAPIDoc)
+	r.Get("/swagger/openapi.json", httpapi.OpenAPIDoc)
 	r.Mount("/", httpapi.Routes(httpapi.RouteDeps{
 		Logger:       logger,
 		FileStoreDir: cfg.FileDir,
+		AnimalWriter: services.AnimalWriter,
 	}))
 	return r
 }
 
-func openAPIDoc(w http.ResponseWriter, _ *http.Request) {
-	body, err := spec.JSON()
+func openSQLiteDB(cfg config.Config) (*sql.DB, error) {
+	dbPath, err := filepath.Abs(cfg.DBPath)
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
+		return nil, fmt.Errorf("resolve db path: %w", err)
 	}
 
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	_, _ = w.Write(body)
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("open sqlite: %w", err)
+	}
+	if err := db.Ping(); err != nil {
+		_ = db.Close()
+		return nil, fmt.Errorf("ping sqlite: %w", err)
+	}
+	return db, nil
 }
 
 func newHTTPServer(cfg config.Config, handler http.Handler) *http.Server {
@@ -154,7 +173,7 @@ func runMigrations(logger *slog.Logger, cfg config.Config) error {
 		return fmt.Errorf("create db directory: %w", err)
 	}
 
-	dbURL := (&url.URL{Scheme: "sqlite3", Path: dbPath}).String()
+	dbURL := (&url.URL{Scheme: "sqlite", Path: dbPath}).String()
 	srcURL := (&url.URL{Scheme: "file", Path: migrationsPath}).String()
 
 	logger.Info("running migrations", slog.String("database", dbURL), slog.String("source", srcURL))
