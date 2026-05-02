@@ -1,0 +1,6 @@
+reviews:
+  path_filters:
+    - "!/.agents/skills/**"
+    - "/.agents/skills/barnboard/**"
+    - "/.agents/skills/barnreview/**"
+    - "!/skills-lock.json"

@@ -18,6 +18,7 @@ docs/prototype/output/playwright/prototype-state/** linguist-generated=false
 
 # Third-party skills synced into repo
 .agents/skills/** linguist-generated=true
+skills-lock.json linguist-generated=true
 
 # Keep repo-owned first-party skills reviewable
 .agents/skills/barnboard/** linguist-generated=false
