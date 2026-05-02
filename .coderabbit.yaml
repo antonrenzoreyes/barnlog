@@ -1,8 +1,8 @@
 reviews:
   path_filters:
-    - "/frontend/**"
-    - "/backend/**"
-    - "/scripts/**"
-    - "/.agents/skills/barnboard/**"
-    - "!/.agents/skills/**"
-    - "!/skills-lock.json"
+    - "frontend/**"
+    - "backend/**"
+    - "scripts/**"
+    - ".agents/skills/barnboard/**"
+    - "!.agents/skills/**"
+    - "!skills-lock.json"
