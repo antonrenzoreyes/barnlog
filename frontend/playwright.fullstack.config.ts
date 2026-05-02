@@ -11,6 +11,7 @@ const runID =
 const tempRoot = process.env.RUNNER_TEMP ?? "/tmp";
 const dbPath = `${tempRoot}/barnlog-e2e-${runID}.sqlite3`;
 const fileDir = `${tempRoot}/barnlog-e2e-files-${runID}`;
+process.env.PLAYWRIGHT_BACKEND_URL = backendURL;
 
 export default defineConfig({
   testDir: "e2e",
