@@ -18,8 +18,9 @@
     "gen:api-types": "openapi-typescript ../backend/openapi/openapi.yaml -o src/lib/api/generated/types.ts",
     "check:api-types": "bun run gen:api-types && git diff --exit-code -- src/lib/api/generated/types.ts",
     "test:unit": "vitest",
-    "test": "bun run test:unit -- --run && bun run test:e2e",
-    "test:e2e": "playwright test"
+    "test": "bun run test:unit -- --run && bun run test:e2e && bun run test:e2e:fullstack",
+    "test:e2e": "playwright test",
+    "test:e2e:fullstack": "playwright test -c playwright.fullstack.config.ts"
   },
   "dependencies": {
     "@internationalized/date": "^3.12.0",
