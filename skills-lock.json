@@ -26,6 +26,12 @@
       "sourceType": "github",
       "computedHash": "a64630cd78071ed2e051672dab19af6bbcdfa91bed495ed0acbdd57a3b799a26"
     },
+    "brainstorming": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/brainstorming/SKILL.md",
+      "computedHash": "8df9b47092524833138b58682d03f2e153a242e550d1693657afdbee0cc9cdb0"
+    },
     "clarify": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
@@ -50,6 +56,12 @@
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "c94699590c44450c3520f7071642411247e685e65ce771ca5596911462001693"
+    },
+    "executing-plans": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/executing-plans/SKILL.md",
+      "computedHash": "2f709d1a2c7564f8ce6a9bb707e7f5451117ba80f8e8e2302662c29bc61246a6"
     },
     "extract": {
       "source": "pbakaus/impeccable",
@@ -96,6 +108,12 @@
       "sourceType": "github",
       "computedHash": "48e998e3d5c30ae959d78ca945563f07afa61bd1ce1e6acc890f6fbf2baaf119"
     },
+    "subagent-driven-development": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/subagent-driven-development/SKILL.md",
+      "computedHash": "a197f8e5fba5ea59013e1adbaa90dd42db35de8f074feca200c8038de584a83b"
+    },
     "svelte-code-writer": {
       "source": "sveltejs/ai-tools",
       "sourceType": "github",
@@ -111,15 +129,33 @@
       "sourceType": "github",
       "computedHash": "31756fe090814f06b81a4fe5220f69f8d7885f9f4a0ad10de240c6c6082fe743"
     },
+    "test-driven-development": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/test-driven-development/SKILL.md",
+      "computedHash": "126f1ebf6ccd414f42544f6e83d8cc5adb089e1108eaffb7c400701e37eecd9f"
+    },
     "typeset": {
       "source": "pbakaus/impeccable",
       "sourceType": "github",
       "computedHash": "3ed1b5db2db9594a15fca4d01a0f4b07581ccd635844a8c667782c19b83c95e2"
     },
+    "using-superpowers": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/using-superpowers/SKILL.md",
+      "computedHash": "e0eced9fbb205c212f420aded0c6f2bf5d5f059254679a8459b4fe72390160be"
+    },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
       "computedHash": "a6a44d5498f7e8f68289902f3dedfc6f38ae0cee1e96527c80724cf27f727c2a"
+    },
+    "writing-plans": {
+      "source": "obra/superpowers",
+      "sourceType": "github",
+      "skillPath": "skills/writing-plans/SKILL.md",
+      "computedHash": "bfaed11054ad8021c66860244e2d2e0d1eca483ae9f5fbfcb956e99c61f5c3d7"
     }
   }
 }
