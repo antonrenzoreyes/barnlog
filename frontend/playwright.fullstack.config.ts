@@ -3,9 +3,11 @@ import { defineConfig } from "@playwright/test";
 
 const backendURL = "http://127.0.0.1:8081";
 const frontendURL = "http://localhost:4173";
+const randomBase = 16;
+const randomSliceStart = 2;
 const runID =
   process.env.GITHUB_RUN_ID ??
-  `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  `${Date.now()}-${Math.random().toString(randomBase).slice(randomSliceStart)}`;
 const tempRoot = process.env.RUNNER_TEMP ?? "/tmp";
 const dbPath = `${tempRoot}/barnlog-e2e-${runID}.sqlite3`;
 const fileDir = `${tempRoot}/barnlog-e2e-files-${runID}`;
