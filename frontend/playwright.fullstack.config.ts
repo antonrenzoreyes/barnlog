@@ -3,6 +3,12 @@ import { defineConfig } from "@playwright/test";
 
 const backendURL = "http://127.0.0.1:8081";
 const frontendURL = "http://localhost:4173";
+const runID =
+  process.env.GITHUB_RUN_ID ??
+  `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+const tempRoot = process.env.RUNNER_TEMP ?? "/tmp";
+const dbPath = `${tempRoot}/barnlog-e2e-${runID}.sqlite3`;
+const fileDir = `${tempRoot}/barnlog-e2e-files-${runID}`;
 
 export default defineConfig({
   testDir: "e2e",
@@ -12,19 +18,19 @@ export default defineConfig({
   },
   webServer: [
     {
-      command: "go run ./backend/cmd/server",
+      command: `rm -rf "${dbPath}" "${fileDir}" && go run ./backend/cmd/server`,
       cwd: "..",
       env: {
         ...process.env,
         BARNLOG_AUTO_MIGRATE: "true",
-        BARNLOG_DB_PATH: "/tmp/barnlog-e2e.sqlite3",
+        BARNLOG_DB_PATH: dbPath,
         BARNLOG_ENV: "test",
-        BARNLOG_FILE_DIR: "/tmp/barnlog-e2e-files",
+        BARNLOG_FILE_DIR: fileDir,
         BARNLOG_HTTP_ADDR: "127.0.0.1:8081",
         BARNLOG_LOG_LEVEL: "error",
       },
       name: "Backend",
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       timeout: 120_000,
       url: `${backendURL}/healthz`,
     },
@@ -36,7 +42,7 @@ export default defineConfig({
         PUBLIC_API_BASE_URL: backendURL,
       },
       name: "Frontend",
-      reuseExistingServer: !process.env.CI,
+      reuseExistingServer: false,
       timeout: 120_000,
       url: frontendURL,
     },
