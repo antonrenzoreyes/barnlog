@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { defineConfig } from "@playwright/test";
 
-const backendURL = "http://localhost:8081";
+const backendURL = "http://127.0.0.1:8081";
 const frontendURL = "http://localhost:4173";
 
 export default defineConfig({

@@ -2,6 +2,7 @@
 import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
+  testIgnore: "**/*.fullstack.spec.ts",
   webServer: {
     command: "bun run build && bun run preview -- --host localhost --strictPort --port 4173",
     url: "http://localhost:4173",

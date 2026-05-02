@@ -4,7 +4,7 @@ test("fullstack: backend health and frontend home are reachable", async ({
   page,
   request,
 }) => {
-  const backendHealth = await request.get("http://localhost:8081/healthz");
+  const backendHealth = await request.get("http://127.0.0.1:8081/healthz");
   expect(backendHealth.ok()).toBe(true);
 
   await page.goto("/");
