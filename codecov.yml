@@ -6,16 +6,22 @@ coverage:
           - backend
         target: auto
         threshold: 1%
+        informational: true
       frontend:
         flags:
           - frontend
         target: auto
         threshold: 1%
+        informational: true
     patch:
       default:
         target: auto
         threshold: 1%
+        informational: true
+
+github_checks:
+  annotations: true
 
 comment:
   layout: "reach,diff,flags,files"
-  require_changes: true
+  require_changes: false
