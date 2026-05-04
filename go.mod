@@ -8,7 +8,7 @@ require (
 	github.com/oapi-codegen/runtime v1.1.2
 	github.com/swaggo/http-swagger/v2 v2.0.2
 	modernc.org/sqlite v1.18.1
-	sigs.k8s.io/yaml v1.4.0
+	sigs.k8s.io/yaml v1.6.0
 )
 
 require (
@@ -36,6 +36,7 @@ require (
 	github.com/swaggo/files/v2 v2.0.0 // indirect
 	github.com/swaggo/swag v1.8.1 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
+	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/mod v0.29.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
 	golang.org/x/sys v0.38.0 // indirect
