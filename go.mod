@@ -3,7 +3,7 @@ module barnlog
 go 1.26
 
 require (
-	github.com/go-chi/chi/v5 v5.2.5
+	github.com/go-chi/chi/v5 v5.3.0
 	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/oapi-codegen/runtime v1.1.2
 	github.com/swaggo/http-swagger/v2 v2.0.2
